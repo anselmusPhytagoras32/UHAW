@@ -204,7 +204,7 @@ public class AdminInventoryScreen extends JPanel {
             tableModel.addRow(new Object[]{
                     item.itemName,
                     item.description,
-                    String.format("$%.2f", item.value),
+                    String.format("PHP %.2f", item.value),
                     item.category
             });
         }
@@ -277,7 +277,7 @@ public class AdminInventoryScreen extends JPanel {
 
                 InventoryItem newItem = new InventoryItem(name, desc, value, category);
                 inventoryItems.add(newItem);
-                tableModel.addRow(new Object[]{name, desc, String.format("$%.2f", value), category});
+                tableModel.addRow(new Object[]{name, desc, String.format("PHP %.2f", value), category});
                 saveInventoryData();
                 dialog.dispose();
             } catch (NumberFormatException ex) {
@@ -361,7 +361,7 @@ public class AdminInventoryScreen extends JPanel {
 
                 tableModel.setValueAt(name, selectedRow, 0);
                 tableModel.setValueAt(desc, selectedRow, 1);
-                tableModel.setValueAt(String.format("$%.2f", value), selectedRow, 2);
+                tableModel.setValueAt(String.format("PHP %.2f", value), selectedRow, 2);
                 tableModel.setValueAt(category, selectedRow, 3);
 
                 saveInventoryData();
