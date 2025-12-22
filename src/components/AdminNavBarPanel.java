@@ -4,13 +4,6 @@ import java.awt.*;
 import javax.swing.*;
 import main.MainActivity;
 
-/**
- * AdminNavBarPanel represents the admin navigation bar component.
- * Contains navigation buttons for different admin screens.
- *
- * @author Your Name
- * @version 1.0
- */
 public class AdminNavBarPanel extends JPanel {
     private String activeScreen;
 
@@ -65,7 +58,7 @@ public class AdminNavBarPanel extends JPanel {
         // Admin label (bold and larger)
         JLabel adminLabel = new JLabel(activeScreen);
         adminLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        adminLabel.setForeground(Color.WHITE);
+        adminLabel.setForeground(Color.BLACK); // Changed to BLACK
 
         // Navigation buttons
         JButton dashboardButton = new AdminNavButton("Dashboard");
@@ -113,7 +106,7 @@ public class AdminNavBarPanel extends JPanel {
         public AdminNavButton(String text) {
             super(text);
             setFont(new Font("Arial", Font.PLAIN, 16));
-            setForeground(Color.WHITE);
+            setForeground(Color.BLACK); // Changed to BLACK
             setBackground(new Color(70, 130, 180));
             setFocusPainted(false);
             setBorderPainted(false);
@@ -123,12 +116,13 @@ public class AdminNavBarPanel extends JPanel {
             addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    setForeground(new Color(200, 230, 255));
+                    // Changed hover color to WHITE for contrast against the blue background
+                    setForeground(Color.WHITE);
                 }
 
                 @Override
                 public void mouseExited(java.awt.event.MouseEvent evt) {
-                    setForeground(Color.WHITE);
+                    setForeground(Color.BLACK); // Changed back to BLACK
                 }
             });
         }

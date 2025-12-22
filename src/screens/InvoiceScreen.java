@@ -8,13 +8,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
-/**
- * PurchaseHistoryScreen class represents the purchase history interface.
- * This screen displays all user purchase history in a table format.
- *
- * @author Your Name
- * @version 2.0
- */
 public class InvoiceScreen extends JPanel {
     private DefaultTableModel tableModel;
     private JTable purchaseTable;

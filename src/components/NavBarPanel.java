@@ -4,13 +4,6 @@ import java.awt.*;
 import javax.swing.*;
 import main.MainActivity;
 
-/**
- * NavBarPanel represents the navigation bar component.
- * Contains navigation buttons for different screens and a search field.
- *
- * @author Your Name
- * @version 1.1
- */
 public class NavBarPanel extends JPanel {
     private String activeScreen;
 

@@ -5,13 +5,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-/**
- * NavButton represents a single navigation button in the navigation bar.
- * Features hover effects and click handling.
- *
- * @author Your Name
- * @version 1.0
- */
 public class NavButton extends JButton {
 
     /**

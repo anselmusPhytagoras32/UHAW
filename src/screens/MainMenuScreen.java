@@ -6,14 +6,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import main.MainActivity;
 
-/**
- * MainMenuScreen represents the modern entry point of the application.
- * Features a split-pane design with scrollable information on the left
- * and navigation on the right.
- *
- * @author Your Name
- * @version 3.0
- */
 public class MainMenuScreen extends JPanel {
 
     // Brand Colors
@@ -23,19 +15,14 @@ public class MainMenuScreen extends JPanel {
     public MainMenuScreen() {
         setLayout(new GridLayout(1, 2)); // Split 50/50
 
-        // ==========================================
-        // LEFT PANEL (Scrollable Info / About Side)
-        // ==========================================
 
-        // 1. Create the content panel for the left side
+        // LEFT PANEL (Scrollable Info / About Side)
         JPanel leftContentPanel = new JPanel();
         leftContentPanel.setLayout(new BoxLayout(leftContentPanel, BoxLayout.Y_AXIS));
         leftContentPanel.setBackground(PRIMARY_BLUE);
         leftContentPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
-        // 2. Add Content Elements
-
-        // Title: UHAW...
+        //Add Content Elements
         JTextArea titleLabel = createTextComponent(
                 "UHAW: Unified Hardware for Automated Wholesale/Retail",
                 new Font("Arial", Font.BOLD, 42)
@@ -57,7 +44,6 @@ public class MainMenuScreen extends JPanel {
         );
         descLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
-        // Add to panel
         leftContentPanel.add(Box.createVerticalGlue()); // Push content to center
         leftContentPanel.add(titleLabel);
         leftContentPanel.add(Box.createVerticalStrut(10));
@@ -66,7 +52,6 @@ public class MainMenuScreen extends JPanel {
         leftContentPanel.add(descLabel);
         leftContentPanel.add(Box.createVerticalGlue());
 
-        // 3. Wrap in ScrollPane
         JScrollPane leftScrollPane = new JScrollPane(leftContentPanel);
         leftScrollPane.setBorder(null); // Remove border
         leftScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -82,10 +67,7 @@ public class MainMenuScreen extends JPanel {
             }
         });
 
-        // ==========================================
         // RIGHT PANEL (Navigation Buttons)
-        // ==========================================
-
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new GridBagLayout());
         rightPanel.setBackground(Color.WHITE);

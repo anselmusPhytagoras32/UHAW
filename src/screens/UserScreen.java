@@ -9,25 +9,16 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import main.MainActivity;
 
-/**
- * UserScreen class represents the main invoice generation interface.
- * Implements Quantity Tracking: Decrements inventory on checkout and shows Out of Stock.
- *
- * @author Your Name
- * @version 2.3
- */
 public class UserScreen extends JPanel {
 
     private Map<String, Double> itemValueMap;
     private Map<String, String> itemCategoryMap;
-    // New Map to track available quantities
     private Map<String, Integer> itemQuantityMap;
     private Set<String> selectedCategories;
     private JPanel itemsPanel;
     private JLabel overallTotalLabel;
     private JLabel totalItemsLabel;
     private java.util.List<JSpinner> quantitySpinners;
-    // Map to link spinners back to item names for checkout logic
     private Map<JSpinner, String> spinnerToItemMap;
 
     private JTextField nameInput;
@@ -89,45 +80,37 @@ public class UserScreen extends JPanel {
     }
 
     /**
-     * Loads inventory data from inventory.json file.
+     * Public refresh method called by MainActivity
      */
+    public void refreshData() {
+        loadInventoryData();
+        refreshTableRows();
+    }
+
     private void loadInventoryData() {
         try {
             File file = null;
-            String[] possiblePaths = {
-                    "src/items/inventory.json",
-                    "items/inventory.json",
-                    "../items/inventory.json",
-                    "./src/items/inventory.json"
-            };
+            String[] possiblePaths = { "src/items/inventory.json", "items/inventory.json", "../items/inventory.json" };
             for (String path : possiblePaths) {
                 File testFile = new File(path);
-                if (testFile.exists()) {
-                    file = testFile;
-                    break;
-                }
+                if (testFile.exists()) { file = testFile; break; }
             }
             if (file != null && file.exists()) {
                 try (Scanner scanner = new Scanner(file)) {
                     StringBuilder content = new StringBuilder();
-                    while (scanner.hasNextLine()) {
-                        content.append(scanner.nextLine());
-                    }
+                    while (scanner.hasNextLine()) content.append(scanner.nextLine());
                     parseInventoryJson(content.toString());
                 }
             } else {
                 loadSampleData();
             }
         } catch (Exception e) {
-            e.printStackTrace();
             loadSampleData();
         }
     }
 
     private void loadSampleData() {
         itemValueMap.put("Product A", 150.00); itemCategoryMap.put("Product A", "1"); itemQuantityMap.put("Product A", 10);
-        itemValueMap.put("Product B", 75.50); itemCategoryMap.put("Product B", "1"); itemQuantityMap.put("Product B", 5);
-        // ... add other sample data ...
     }
 
     private void parseInventoryJson(String jsonContent) {
@@ -143,16 +126,14 @@ public class UserScreen extends JPanel {
                     String itemName = extractJsonValue(item, "itemName");
                     String valueStr = extractJsonValue(item, "value");
                     String category = extractJsonValue(item, "category");
-                    String qtyStr = extractJsonValue(item, "quantity"); // Parse Quantity
+                    String qtyStr = extractJsonValue(item, "quantity");
 
                     if (itemName != null && valueStr != null && category != null) {
                         try {
                             double value = Double.parseDouble(valueStr.replaceAll(",.*", "").trim());
+                            int qty = (qtyStr != null) ? Integer.parseInt(qtyStr.trim()) : 0;
                             itemValueMap.put(itemName, value);
                             itemCategoryMap.put(itemName, category);
-
-                            // Parse Quantity (default to 0 if missing)
-                            int qty = (qtyStr != null) ? Integer.parseInt(qtyStr.trim()) : 0;
                             itemQuantityMap.put(itemName, qty);
                         } catch (Exception e) {}
                     }
@@ -181,37 +162,20 @@ public class UserScreen extends JPanel {
     }
 
     private JPanel getCustomerInfoPanel() {
-        JPanel informationInputContainer = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
-        informationInputContainer.setOpaque(false);
+        JPanel container = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
+        container.setOpaque(false);
 
-        JPanel nameContainer = new JPanel(new BorderLayout(5, 0));
-        nameContainer.setOpaque(false);
-        JLabel nameLabel = new JLabel("Name:");
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        nameInput = getInputField();
-        nameContainer.add(nameLabel, BorderLayout.WEST);
-        nameContainer.add(nameInput, BorderLayout.CENTER);
+        JPanel p1 = new JPanel(new BorderLayout(5, 0)); p1.setOpaque(false);
+        p1.add(new JLabel("Name:"), BorderLayout.WEST); nameInput = getInputField(); p1.add(nameInput, BorderLayout.CENTER);
 
-        JPanel contactContainer = new JPanel(new BorderLayout(5, 0));
-        contactContainer.setOpaque(false);
-        JLabel contactLabel = new JLabel("Contact No.:");
-        contactLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        contactInput = getInputField();
-        contactContainer.add(contactLabel, BorderLayout.WEST);
-        contactContainer.add(contactInput, BorderLayout.CENTER);
+        JPanel p2 = new JPanel(new BorderLayout(5, 0)); p2.setOpaque(false);
+        p2.add(new JLabel("Contact No.:"), BorderLayout.WEST); contactInput = getInputField(); p2.add(contactInput, BorderLayout.CENTER);
 
-        JPanel addressContainer = new JPanel(new BorderLayout(5, 0));
-        addressContainer.setOpaque(false);
-        JLabel addressLabel = new JLabel("Address:");
-        addressLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        addressInput = getInputField();
-        addressContainer.add(addressLabel, BorderLayout.WEST);
-        addressContainer.add(addressInput, BorderLayout.CENTER);
+        JPanel p3 = new JPanel(new BorderLayout(5, 0)); p3.setOpaque(false);
+        p3.add(new JLabel("Address:"), BorderLayout.WEST); addressInput = getInputField(); p3.add(addressInput, BorderLayout.CENTER);
 
-        informationInputContainer.add(nameContainer);
-        informationInputContainer.add(contactContainer);
-        informationInputContainer.add(addressContainer);
-        return informationInputContainer;
+        container.add(p1); container.add(p2); container.add(p3);
+        return container;
     }
 
     private JPanel getInvoiceTablePanel() {
@@ -234,82 +198,65 @@ public class UserScreen extends JPanel {
         itemsPanel = new JPanel();
         itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.Y_AXIS));
         itemsPanel.setOpaque(false);
-
         refreshTableRows();
 
-        JPanel scrollableContent = new JPanel(new BorderLayout());
-        scrollableContent.setOpaque(false);
-        scrollableContent.add(itemsPanel, BorderLayout.NORTH);
+        JPanel scrollContent = new JPanel(new BorderLayout());
+        scrollContent.setOpaque(false);
+        scrollContent.add(itemsPanel, BorderLayout.NORTH);
 
-        JScrollPane scrollPane = new JScrollPane(scrollableContent);
+        JScrollPane scrollPane = new JScrollPane(scrollContent);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
-        scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
+        scrollPane.setOpaque(false);
         scrollPane.setPreferredSize(new Dimension(scrollPane.getPreferredSize().width, 350));
 
-        JPanel tableContentPanel = new JPanel(new BorderLayout());
-        tableContentPanel.setOpaque(false);
-        tableContentPanel.add(headerPanel, BorderLayout.NORTH);
-        tableContentPanel.add(scrollPane, BorderLayout.CENTER);
+        JPanel content = new JPanel(new BorderLayout());
+        content.setOpaque(false);
+        content.add(headerPanel, BorderLayout.NORTH);
+        content.add(scrollPane, BorderLayout.CENTER);
 
         tablePanel.add(categoryPanel, BorderLayout.NORTH);
-        tablePanel.add(tableContentPanel, BorderLayout.CENTER);
-
+        tablePanel.add(content, BorderLayout.CENTER);
         return tablePanel;
     }
 
-    private int getFilteredItemCount() {
-        int count = 0;
-        for (String itemName : itemValueMap.keySet()) {
-            if (selectedCategories.contains(itemCategoryMap.get(itemName))) count++;
-        }
-        return count;
-    }
-
     private JPanel createCategoryTogglePanel() {
-        JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        categoryPanel.setOpaque(false);
-        categoryPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        JLabel categoryLabel = new JLabel("Categories:");
-        categoryLabel.setFont(new Font("Arial", Font.BOLD, 12));
-        categoryPanel.add(categoryLabel);
-        for (String category : Arrays.asList("1", "2", "3")) {
-            JToggleButton categoryBtn = new JToggleButton(category);
-            categoryBtn.setSelected(true);
-            categoryBtn.setFont(new Font("Arial", Font.PLAIN, 12));
-            categoryBtn.setPreferredSize(new Dimension(50, 30));
-            categoryBtn.setBackground(new Color(130, 170, 255));
-            categoryBtn.setForeground(Color.WHITE);
-            categoryBtn.setFocusPainted(false);
-            categoryBtn.addActionListener(e -> {
-                if (categoryBtn.isSelected()) {
-                    selectedCategories.add(category);
-                    categoryBtn.setBackground(new Color(130, 170, 255));
-                    categoryBtn.setForeground(Color.WHITE);
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        panel.setOpaque(false);
+        panel.add(new JLabel("Categories:"));
+        for (String cat : Arrays.asList("1", "2", "3")) {
+            JToggleButton btn = new JToggleButton(cat);
+            btn.setSelected(true);
+            btn.setPreferredSize(new Dimension(50, 30));
+            btn.setBackground(new Color(130, 170, 255));
+            btn.setForeground(Color.WHITE);
+            btn.addActionListener(e -> {
+                if (btn.isSelected()) {
+                    selectedCategories.add(cat);
+                    btn.setBackground(new Color(130, 170, 255));
+                    btn.setForeground(Color.WHITE);
                 } else {
-                    selectedCategories.remove(category);
-                    categoryBtn.setBackground(new Color(200, 200, 200));
-                    categoryBtn.setForeground(Color.BLACK);
+                    selectedCategories.remove(cat);
+                    btn.setBackground(new Color(200, 200, 200));
+                    btn.setForeground(Color.BLACK);
                 }
                 refreshTableRows();
             });
-            categoryPanel.add(categoryBtn);
+            panel.add(btn);
         }
-        return categoryPanel;
+        return panel;
     }
 
     private void refreshTableRows() {
         itemsPanel.removeAll();
         quantitySpinners.clear();
         spinnerToItemMap.clear();
+        java.util.List<String> sorted = new ArrayList<>(itemValueMap.keySet());
+        Collections.sort(sorted);
 
-        // Sort items for consistent display
-        java.util.List<String> sortedItems = new java.util.ArrayList<>(itemValueMap.keySet());
-        Collections.sort(sortedItems);
-
-        for (String itemName : sortedItems) {
-            if (selectedCategories.contains(itemCategoryMap.get(itemName))) {
-                itemsPanel.add(createItemRow(itemName));
+        for (String item : sorted) {
+            if (selectedCategories.contains(itemCategoryMap.get(item))) {
+                itemsPanel.add(createItemRow(item));
             }
         }
         itemsPanel.revalidate();
@@ -318,60 +265,47 @@ public class UserScreen extends JPanel {
     }
 
     private JPanel createItemRow(String itemName) {
-        JPanel rowPanel = new JPanel(new GridLayout(1, 4, 5, 0));
-        rowPanel.setOpaque(false);
-        rowPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        JPanel row = new JPanel(new GridLayout(1, 4, 5, 0));
+        row.setOpaque(false);
+        row.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-        double itemValue = itemValueMap.get(itemName);
-        // Get Quantity from map, default to 0
-        int availableQty = itemQuantityMap.getOrDefault(itemName, 0);
+        double val = itemValueMap.get(itemName);
+        int qtyAvailable = itemQuantityMap.getOrDefault(itemName, 0);
 
-        JLabel itemNameLabel = getStyledLabel(itemName);
-        itemNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        JLabel nameLbl = getStyledLabel(itemName); nameLbl.setHorizontalAlignment(SwingConstants.LEFT);
+        JLabel totalLbl = getStyledLabel("0.00");
+        JLabel valLbl = getStyledLabel(String.format("%.2f", val));
 
-        // --- QUANTITY LOGIC START ---
-        JComponent qtyComponent;
-        JLabel totalLabel = getStyledLabel("0.00");
-        JLabel valueLabel = getStyledLabel(String.format("%.2f", itemValue));
-
-        if (availableQty > 0) {
-            // If stock available, show spinner with max value = availableQty
-            JSpinner qtySpinner = new JSpinner(new SpinnerNumberModel(0, 0, availableQty, 1));
-            qtySpinner.setFont(new Font("Arial", Font.PLAIN, 13));
-            quantitySpinners.add(qtySpinner);
-            spinnerToItemMap.put(qtySpinner, itemName);
-
-            qtySpinner.addChangeListener(e -> {
-                updateTotalFromLabel(qtySpinner, valueLabel, totalLabel);
+        JComponent qtyComp;
+        if (qtyAvailable > 0) {
+            JSpinner s = new JSpinner(new SpinnerNumberModel(0, 0, qtyAvailable, 1));
+            s.setFont(new Font("Arial", Font.PLAIN, 13));
+            quantitySpinners.add(s);
+            spinnerToItemMap.put(s, itemName);
+            s.addChangeListener(e -> {
+                updateTotalFromLabel(s, valLbl, totalLbl);
                 updateOverallTotals();
             });
-            qtyComponent = qtySpinner;
+            qtyComp = s;
         } else {
-            // If 0 stock, show "Out of Stock" label in red
-            JLabel outOfStockLbl = new JLabel("Out of Stock");
-            outOfStockLbl.setForeground(Color.RED);
-            outOfStockLbl.setFont(new Font("Arial", Font.BOLD, 12));
-            outOfStockLbl.setHorizontalAlignment(SwingConstants.CENTER);
-            qtyComponent = outOfStockLbl;
-            totalLabel.setText("-");
+            JLabel out = new JLabel("Out of Stock");
+            out.setForeground(Color.RED);
+            out.setFont(new Font("Arial", Font.BOLD, 12));
+            out.setHorizontalAlignment(SwingConstants.CENTER);
+            qtyComp = out;
+            totalLbl.setText("-");
         }
-        // --- QUANTITY LOGIC END ---
 
-        rowPanel.add(itemNameLabel);
-        rowPanel.add(qtyComponent);
-        rowPanel.add(valueLabel);
-        rowPanel.add(totalLabel);
-        return rowPanel;
+        row.add(nameLbl); row.add(qtyComp); row.add(valLbl); row.add(totalLbl);
+        return row;
     }
 
-    private void updateTotalFromLabel(JSpinner qtySpinner, JLabel valueLabel, JLabel totalLabel) {
+    private void updateTotalFromLabel(JSpinner s, JLabel vLbl, JLabel tLbl) {
         try {
-            int qty = (Integer) qtySpinner.getValue();
-            double value = Double.parseDouble(valueLabel.getText().trim());
-            totalLabel.setText(String.format("%.2f", qty * value));
-        } catch (Exception e) {
-            totalLabel.setText("0.00");
-        }
+            int q = (Integer) s.getValue();
+            double v = Double.parseDouble(vLbl.getText());
+            tLbl.setText(String.format("%.2f", q * v));
+        } catch (Exception e) { tLbl.setText("0.00"); }
     }
 
     private JPanel getBottomPanel() {
@@ -379,289 +313,186 @@ public class UserScreen extends JPanel {
         bottomPanel.setOpaque(false);
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-        JPanel totalsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
-        totalsPanel.setOpaque(false);
-
-        JPanel overallTotalContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        overallTotalContainer.setOpaque(false);
-        overallTotalContainer.add(new JLabel("Overall Total:"));
+        JPanel totals = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
+        totals.setOpaque(false);
+        totals.add(new JLabel("Overall Total:"));
         overallTotalLabel = getStyledLabel("0.00");
-        overallTotalLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        overallTotalContainer.add(overallTotalLabel);
-
-        JPanel totalItemsContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        totalItemsContainer.setOpaque(false);
-        totalItemsContainer.add(new JLabel("Total Items:"));
+        totals.add(overallTotalLabel);
+        totals.add(new JLabel("Total Items:"));
         totalItemsLabel = getStyledLabel("0");
-        totalItemsLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        totalItemsContainer.add(totalItemsLabel);
+        totals.add(totalItemsLabel);
 
-        totalsPanel.add(overallTotalContainer);
-        totalsPanel.add(totalItemsContainer);
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+        buttons.setOpaque(false);
 
-        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
-        buttonsPanel.setOpaque(false);
+        JButton historyButton = createActionButton("History", new Color(100, 100, 100));
+        historyButton.addActionListener(e -> MainActivity.getInstance().showScreen(MainActivity.PURCHASE_HISTORY_SCREEN));
 
         JButton checkoutButton = createActionButton("Checkout", new Color(34, 139, 34));
         checkoutButton.addActionListener(e -> generateInvoice());
 
-        buttonsPanel.add(checkoutButton);
+        buttons.add(historyButton);
+        buttons.add(checkoutButton);
 
-        JPanel wrapperPanel = new JPanel();
-        wrapperPanel.setLayout(new BoxLayout(wrapperPanel, BoxLayout.X_AXIS));
-        wrapperPanel.setOpaque(false);
-        wrapperPanel.add(totalsPanel);
-        wrapperPanel.add(Box.createHorizontalGlue());
-        wrapperPanel.add(buttonsPanel);
-        bottomPanel.add(wrapperPanel, BorderLayout.CENTER);
+        bottomPanel.add(totals, BorderLayout.WEST);
+        bottomPanel.add(buttons, BorderLayout.EAST);
         return bottomPanel;
     }
 
     private void updateOverallTotals() {
-        if (overallTotalLabel == null || totalItemsLabel == null) return;
-
-        double overallTotal = 0.0;
-        int totalItems = 0;
-
-        for (JSpinner spinner : quantitySpinners) {
-            try {
-                int qty = (Integer) spinner.getValue();
-                if (qty > 0) {
-                    String itemName = spinnerToItemMap.get(spinner);
-                    if (itemName != null && itemValueMap.containsKey(itemName)) {
-                        overallTotal += qty * itemValueMap.get(itemName);
-                        totalItems += qty;
-                    }
-                }
-            } catch (Exception e) {}
+        if (overallTotalLabel == null) return;
+        double total = 0; int count = 0;
+        for (JSpinner s : quantitySpinners) {
+            int q = (Integer) s.getValue();
+            if (q > 0) {
+                total += q * itemValueMap.get(spinnerToItemMap.get(s));
+                count += q;
+            }
         }
-
-        overallTotalLabel.setText(String.format("%.2f", overallTotal));
-        totalItemsLabel.setText(String.valueOf(totalItems));
+        overallTotalLabel.setText(String.format("%.2f", total));
+        totalItemsLabel.setText(String.valueOf(count));
     }
 
-    private JButton createActionButton(String text, Color bgColor) {
-        JButton button = new JButton(text) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(getBackground());
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        button.setFont(new Font("Arial", Font.BOLD, 14));
-        button.setBackground(bgColor);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setContentAreaFilled(false);
-        button.setOpaque(false);
-        return button;
+    private JButton createActionButton(String text, Color bg) {
+        JButton b = new JButton(text);
+        b.setFont(new Font("Arial", Font.BOLD, 14));
+        b.setBackground(bg);
+        b.setForeground(Color.WHITE);
+        b.setFocusPainted(false);
+        b.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return b;
     }
 
     private static JTextField getInputField() {
-        JTextField inputField = new JTextField("", 15);
-        inputField.setFont(new Font("Arial", Font.PLAIN, 14));
-        inputField.setBorder(BorderFactory.createCompoundBorder(
-                new RoundedBorder(15, new Color(200, 200, 200)),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        ));
-        return inputField;
+        JTextField f = new JTextField("", 15);
+        f.setFont(new Font("Arial", Font.PLAIN, 14));
+        f.setBorder(BorderFactory.createCompoundBorder(new RoundedBorder(15, new Color(200, 200, 200)), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        return f;
     }
 
     private static JLabel getStyledLabel(String text) {
-        JLabel label = new JLabel(text, SwingConstants.CENTER);
-        label.setFont(new Font("Arial", Font.PLAIN, 13));
-        label.setBackground(new Color(245, 245, 245));
-        label.setOpaque(true);
-        label.setBorder(BorderFactory.createCompoundBorder(
-                new RoundedBorder(12, new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(5, 8, 5, 8)
-        ));
-        label.setPreferredSize(new Dimension(100, 30));
-        return label;
+        JLabel l = new JLabel(text, SwingConstants.CENTER);
+        l.setFont(new Font("Arial", Font.PLAIN, 13));
+        l.setBackground(new Color(245, 245, 245));
+        l.setOpaque(true);
+        l.setBorder(BorderFactory.createCompoundBorder(new RoundedBorder(12, new Color(180, 180, 180)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+        l.setPreferredSize(new Dimension(100, 30));
+        return l;
     }
 
-    /**
-     * Logic to generate invoice and decrement inventory.
-     */
     private void generateInvoice() {
-        String customerName = nameInput.getText().trim();
-        String contactNo = contactInput.getText().trim();
-        String address = addressInput.getText().trim();
+        String name = nameInput.getText().trim();
+        String contact = contactInput.getText().trim();
+        String addr = addressInput.getText().trim();
 
-        if (customerName.isEmpty() || contactNo.isEmpty() || address.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill in all customer information.", "Missing Information", JOptionPane.WARNING_MESSAGE);
+        if (name.isEmpty() || contact.isEmpty() || addr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all info.", "Missing Info", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // 1. Calculate Items to Buy & Decrements
-        java.util.List<InvoiceItem> itemsToBuy = new ArrayList<>();
+        java.util.List<InvoiceItem> items = new ArrayList<>();
         Map<String, Integer> decrements = new HashMap<>();
-        double subtotal = 0.0;
-        int totalQty = 0;
+        double total = 0;
 
-        for (JSpinner spinner : quantitySpinners) {
-            int qty = (Integer) spinner.getValue();
-            if (qty > 0) {
-                String itemName = spinnerToItemMap.get(spinner);
-                double unitPrice = itemValueMap.get(itemName);
-                double amount = qty * unitPrice;
-
-                itemsToBuy.add(new InvoiceItem(itemName, qty, unitPrice, amount));
-                decrements.put(itemName, qty);
-                subtotal += amount;
-                totalQty += qty;
+        for (JSpinner s : quantitySpinners) {
+            int q = (Integer) s.getValue();
+            if (q > 0) {
+                String item = spinnerToItemMap.get(s);
+                double p = itemValueMap.get(item);
+                items.add(new InvoiceItem(item, q, p, q * p));
+                decrements.put(item, q);
+                total += q * p;
             }
         }
 
-        if (itemsToBuy.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please add at least one item.", "No Items", JOptionPane.WARNING_MESSAGE);
+        if (items.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Select at least one item.", "Empty Cart", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // 2. Decrement Inventory in JSON
         if (updateInventoryFile(decrements)) {
-            // 3. Generate Invoice File
-            writeInvoiceToFile(customerName, contactNo, address, itemsToBuy, subtotal);
+            writeInvoiceToFile(name, contact, addr, items, total);
+            JOptionPane.showMessageDialog(this, "Invoice Generated!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            nameInput.setText(""); contactInput.setText(""); addressInput.setText("");
 
-            // 4. Success & Refresh
-            JOptionPane.showMessageDialog(this, "Invoice generated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-
-            nameInput.setText("");
-            contactInput.setText("");
-            addressInput.setText("");
-
-            // Reload to reflect new quantities (Out of Stock items will now show label)
-            loadInventoryData();
-            refreshTableRows();
-
+            // --- AUTO REFRESH TRIGGER ---
+            if (MainActivity.getInstance() != null) {
+                MainActivity.getInstance().refreshAllScreens();
+            }
         } else {
-            JOptionPane.showMessageDialog(this, "Error updating inventory.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Inventory Error", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    /**
-     * Updates inventory.json by subtracting purchased quantities.
-     */
     private boolean updateInventoryFile(Map<String, Integer> decrements) {
         try {
-            File file = new File("src/items/inventory.json");
-            if (!file.exists()) file = new File("items/inventory.json");
-            if (!file.exists()) return false;
+            File f = new File("src/items/inventory.json");
+            if (!f.exists()) f = new File("items/inventory.json");
+            if (!f.exists()) return false;
 
             java.util.List<String> lines = new ArrayList<>();
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                String line;
-                while ((line = br.readLine()) != null) lines.add(line);
+            try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+                String l; while ((l = br.readLine()) != null) lines.add(l);
             }
 
-            for (Map.Entry<String, Integer> entry : decrements.entrySet()) {
-                String targetItem = entry.getKey();
-                int reduceBy = entry.getValue();
-
+            for (Map.Entry<String, Integer> e : decrements.entrySet()) {
+                String target = e.getKey(); int sub = e.getValue();
                 for (int i = 0; i < lines.size(); i++) {
-                    if (lines.get(i).contains("\"itemName\": \"" + targetItem + "\"")) {
+                    if (lines.get(i).contains("\"itemName\": \"" + target + "\"")) {
                         for (int j = i; j < lines.size(); j++) {
                             if (lines.get(j).contains("\"quantity\":")) {
                                 String qLine = lines.get(j);
-                                String[] parts = qLine.split(":");
-                                int currentQty = Integer.parseInt(parts[1].trim().replace(",", ""));
-                                int newQty = Math.max(0, currentQty - reduceBy);
-
+                                int cur = Integer.parseInt(qLine.split(":")[1].trim().replace(",", ""));
                                 String comma = qLine.trim().endsWith(",") ? "," : "";
-                                lines.set(j, "    \"quantity\": " + newQty + comma);
+                                lines.set(j, "    \"quantity\": " + Math.max(0, cur - sub) + comma);
                                 break;
                             }
-                            if (lines.get(j).trim().startsWith("}")) break;
+                            if (lines.get(j).contains("}")) break;
                         }
                         break;
                     }
                 }
             }
-
-            try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
-                for (String line : lines) pw.println(line);
-            }
+            try (PrintWriter pw = new PrintWriter(new FileWriter(f))) { for (String l : lines) pw.println(l); }
             return true;
-        } catch (Exception e) { e.printStackTrace(); return false; }
+        } catch (Exception ex) { return false; }
     }
 
-    private void writeInvoiceToFile(String name, String contact, String addr, java.util.List<InvoiceItem> items, double total) {
+    private void writeInvoiceToFile(String n, String c, String a, java.util.List<InvoiceItem> items, double t) {
         try {
-            SimpleDateFormat invoiceNumFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-            String invoiceNumber = "INV" + invoiceNumFormat.format(new Date());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
-            String dueDate = dateFormat.format(new Date());
-            String subject = "Service for " + dateFormat.format(new Date());
-
-            File invoicesDir = new File("invoices");
-            if (!invoicesDir.exists()) invoicesDir.mkdirs();
-
-            File invoiceFile = new File(invoicesDir, invoiceNumber + ".txt");
-            PrintWriter writer = new PrintWriter(new FileWriter(invoiceFile));
-
-            writer.println("=".repeat(80));
-            writer.println();
-            writer.println("  " + invoiceNumber);
-            writer.println();
-            writer.println("  Due date" + " ".repeat(36) + "Subject");
-            writer.println("  " + dueDate + " ".repeat(30 - dueDate.length()) + subject);
-            writer.println();
-            writer.println("  Billed to" + " ".repeat(37) + "Currency");
-            writer.println("  " + name + " ".repeat(Math.max(1, 30 - name.length())) + "PHP - Philippine Pesos");
-            writer.println("  " + contact);
-            writer.println("  " + addr);
-            writer.println();
-            writer.println("  " + "-".repeat(76));
-            writer.println();
-            writer.println("  DESCRIPTION" + " ".repeat(30) + "QTY" + " ".repeat(8) + "UNIT PRICE" + " ".repeat(8) + "AMOUNT");
-            writer.println();
-
-            for (InvoiceItem item : items) {
-                String desc = item.description;
-                if (desc.length() > 35) {
-                    desc = desc.substring(0, 32) + "...";
+            String inv = "INV" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
+            File d = new File("invoices"); if (!d.exists()) d.mkdir();
+            File f = new File(d, inv + ".txt");
+            try (PrintWriter w = new PrintWriter(new FileWriter(f))) {
+                w.println("=".repeat(80));
+                w.println("\n  " + inv + "\n");
+                w.println("  Due date" + " ".repeat(36) + "Subject");
+                String date = new SimpleDateFormat("dd MMMM yyyy").format(new Date());
+                w.println("  " + date + " ".repeat(30 - date.length()) + "Service for " + date);
+                w.println("\n  Billed to" + " ".repeat(37) + "Currency");
+                w.println("  " + n + " ".repeat(Math.max(1, 30 - n.length())) + "PHP - Philippine Pesos");
+                w.println("  " + c);
+                w.println("  " + a);
+                w.println("\n  " + "-".repeat(76) + "\n");
+                w.println("  DESCRIPTION" + " ".repeat(30) + "QTY" + " ".repeat(8) + "UNIT PRICE" + " ".repeat(8) + "AMOUNT\n");
+                for (InvoiceItem i : items) {
+                    w.printf("  %-40s %3d %,15.3f PHP %,15.3f PHP%n", (i.description.length()>35?i.description.substring(0,32)+"...":i.description), i.qty, i.unitPrice, i.amount);
                 }
-                writer.printf("  %-40s %3d %,15.3f PHP %,15.3f PHP%n", desc, item.qty, item.unitPrice, item.amount);
+                w.println("\n" + " ".repeat(55) + "Amount due" + String.format("%,16.3f PHP", t));
+                w.println("\n" + "=".repeat(80));
             }
-
-            writer.println();
-            writer.println(" ".repeat(55) + "Subtotal" + String.format("%,20.3f PHP", total));
-            writer.println(" ".repeat(55) + "Total" + String.format("%,23.3f PHP", total));
-            writer.println(" ".repeat(55) + "Amount due" + String.format("%,16.3f PHP", total));
-            writer.println();
-            writer.println("  " + "-".repeat(76));
-            writer.println("=".repeat(80));
-            writer.close();
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {}
     }
 
-    private static class InvoiceItem {
-        String description;
-        int qty;
-        double unitPrice;
-        double amount;
-        InvoiceItem(String d, int q, double p, double a) { description = d; qty = q; unitPrice = p; amount = a; }
-    }
-
+    private static class InvoiceItem { String description; int qty; double unitPrice, amount; InvoiceItem(String d, int q, double p, double a){this.description=d;this.qty=q;this.unitPrice=p;this.amount=a;}}
     static class RoundedBorder extends javax.swing.border.AbstractBorder {
-        private final int radius;
-        private final Color borderColor;
-        RoundedBorder(int radius, Color borderColor) { this.radius = radius; this.borderColor = borderColor; }
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(borderColor);
-            g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-            g2.dispose();
+        int r; Color c; RoundedBorder(int r, Color c){this.r=r;this.c=c;}
+        public void paintBorder(Component c, Graphics g, int x, int y, int w, int h){
+            Graphics2D g2=(Graphics2D)g.create(); g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(this.c); g2.drawRoundRect(x,y,w-1,h-1,r,r); g2.dispose();
         }
-        @Override public Insets getBorderInsets(Component c) { return new Insets(2, 2, 2, 2); }
-        @Override public Insets getBorderInsets(Component c, Insets insets) { insets.left = insets.top = insets.right = insets.bottom = 2; return insets; }
+        public Insets getBorderInsets(Component c){return new Insets(2,2,2,2);}
+        public Insets getBorderInsets(Component c, Insets i){i.left=i.right=i.bottom=i.top=2;return i;}
     }
 }

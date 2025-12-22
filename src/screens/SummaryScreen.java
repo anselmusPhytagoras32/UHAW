@@ -4,13 +4,6 @@ import components.NavBarPanel;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * SummaryScreen class represents the summary interface.
- * This screen displays a summary view for the application.
- *
- * @author Your Name
- * @version 1.0
- */
 public class SummaryScreen extends JPanel {
 
     /**

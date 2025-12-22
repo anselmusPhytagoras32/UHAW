@@ -4,16 +4,14 @@ import java.awt.*;
 import javax.swing.*;
 import screens.*;
 
-/**
- * MainActivity serves as the main entry point and navigation controller.
- * FIXED: Mapped InvoiceScreen to 'INVOICE_SCREEN' so the User button works.
- *
- * @author Your Name
- * @version 1.6
- */
 public class MainActivity extends JFrame {
     private CardLayout cardLayout;
     private JPanel cardPanel;
+
+    // --- Screen References (Needed for Auto-Refresh) ---
+    private UserScreen userScreen;
+    private AdminInventoryScreen adminInventoryScreen;
+    private InvoiceScreen invoiceScreen;
 
     // --- Main Menu Identifier ---
     public static final String MAIN_MENU_SCREEN = "MAIN_MENU_SCREEN";
@@ -52,26 +50,28 @@ public class MainActivity extends JFrame {
         MainMenuScreen mainMenuScreen = new MainMenuScreen();
         cardPanel.add(mainMenuScreen, MAIN_MENU_SCREEN);
 
-        // --- 2. Create and Add User Side Screens ---
-        UserScreen userScreen = new UserScreen();
+        // --- 2. Initialize Screens (As Class Variables for Refreshing) ---
+        userScreen = new UserScreen();
+        adminInventoryScreen = new AdminInventoryScreen();
+        invoiceScreen = new InvoiceScreen();
 
-        // FIX: We add InvoiceScreen using the "INVOICE_SCREEN" ID so the button finds it.
-        InvoiceScreen invoiceScreen = new InvoiceScreen();
-        cardPanel.add(invoiceScreen, PURCHASE_HISTORY_SCREEN);
-
-        // Add Summary Screen
+        // Other screens
         SummaryScreen summaryScreen = new SummaryScreen();
-        cardPanel.add(summaryScreen, SUMMARY_SCREEN);
-
-        cardPanel.add(userScreen, USER_SCREEN);
-
-        // --- 3. Create and Add Admin Side Screens ---
         AdminLoginScreen adminLoginScreen = new AdminLoginScreen();
         AdminDashboardScreen adminDashboardScreen = new AdminDashboardScreen();
-        AdminInventoryScreen adminInventoryScreen = new AdminInventoryScreen();
         AdminInvoicesScreen adminInvoicesScreen = new AdminInvoicesScreen();
         AdminUsersScreen adminUsersScreen = new AdminUsersScreen();
 
+        // --- 3. Add User Side Screens to CardPanel ---
+        cardPanel.add(userScreen, USER_SCREEN);
+
+        // FIX: We add InvoiceScreen using the "INVOICE_SCREEN" ID so the button finds it.
+        cardPanel.add(invoiceScreen, INVOICE_SCREEN);
+
+        // Add Summary Screen
+        cardPanel.add(summaryScreen, SUMMARY_SCREEN);
+
+        // --- 4. Add Admin Side Screens to CardPanel ---
         cardPanel.add(adminLoginScreen, ADMIN_LOGIN_SCREEN);
         cardPanel.add(adminDashboardScreen, ADMIN_DASHBOARD_SCREEN);
         cardPanel.add(adminInventoryScreen, ADMIN_INVENTORY_SCREEN);
@@ -81,10 +81,19 @@ public class MainActivity extends JFrame {
         // Add card panel to frame
         add(cardPanel);
 
-        // --- 4. Show Initial Screen (Main Menu) ---
+        // --- 5. Show Initial Screen (Main Menu) ---
         showScreen(MAIN_MENU_SCREEN);
 
         setVisible(true);
+    }
+
+    /**
+     * Triggers a data reload on all key screens.
+     * Called when inventory is modified by Admin or User.
+     */
+    public void refreshAllScreens() {
+        if (userScreen != null) userScreen.refreshData();
+        if (adminInventoryScreen != null) adminInventoryScreen.refreshData();
     }
 
     public void showScreen(String screenName) {

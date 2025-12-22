@@ -8,13 +8,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
-/**
- * AdminInvoicesScreen displays all invoices in the system.
- * Provides functionality to view, search, and manage invoices.
- *
- * @author Your Name
- * @version 1.0
- */
 public class AdminInvoicesScreen extends JPanel {
     private DefaultTableModel tableModel;
     private JTable invoiceTable;

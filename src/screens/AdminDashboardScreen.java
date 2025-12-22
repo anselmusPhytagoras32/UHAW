@@ -8,13 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-/**
- * AdminDashboardScreen displays admin dashboard with statistics and overview.
- * Now includes a FUNCTIONING Recent Activity feed based on invoice files.
- *
- * @author Your Name
- * @version 2.3
- */
 public class AdminDashboardScreen extends JPanel {
 
     // --- Modern Color Palette ---
@@ -53,12 +46,10 @@ public class AdminDashboardScreen extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // --- Stats Section ---
         JPanel statsPanel = createStatsPanel();
         statsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         statsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 140));
 
-        // --- Recent Activity Section ---
         JPanel activityPanel = createActivityContainer();
         activityPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -81,10 +72,7 @@ public class AdminDashboardScreen extends JPanel {
         startAutoRefresh();
     }
 
-    // ==========================================
-    //           UI CREATION METHODS
-    // ==========================================
-
+    //UI stuffs
     private JPanel createStatsPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 3, 20, 0));
         panel.setBackground(BG_COLOR);
@@ -191,10 +179,7 @@ public class AdminDashboardScreen extends JPanel {
         return row;
     }
 
-    // ==========================================
-    //           FUNCTIONAL LOGIC
-    // ==========================================
-
+    //Main logic
     private void startAutoRefresh() {
         // Refresh every 5 seconds to avoid heavy IO
         refreshTimer = new Timer(5000, e -> {

@@ -4,13 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import main.MainActivity;
 
-/**
- * AdminLoginScreen provides authentication for admin access.
- * Displays a login form with username and password fields.
- *
- * @author Your Name
- * @version 1.1
- */
 public class AdminLoginScreen extends JPanel {
 
     public AdminLoginScreen() {

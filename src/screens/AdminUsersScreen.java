@@ -5,13 +5,6 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 
-/**
- * AdminUsersScreen displays user management interface.
- * Provides functionality to view and manage system users.
- *
- * @author Your Name
- * @version 1.0
- */
 public class AdminUsersScreen extends JPanel {
     private DefaultTableModel tableModel;
     private JTable userTable;
