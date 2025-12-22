@@ -1,11 +1,15 @@
 package components;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.*;
+import java.util.function.Consumer;
 import main.MainActivity;
 
 public class NavBarPanel extends JPanel {
     private String activeScreen;
+    private Consumer<String> searchListener; // Listener for search text
 
     public NavBarPanel(String activeScreen) {
         this.activeScreen = activeScreen;
@@ -13,10 +17,8 @@ public class NavBarPanel extends JPanel {
         setBackground(new Color(130, 170, 255));
         setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        // Left section: Label + Nav Buttons
         JPanel leftPanel = getJPanel();
 
-        // Right section: Main Menu + Search
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         rightPanel.setOpaque(false);
 
@@ -36,40 +38,14 @@ public class NavBarPanel extends JPanel {
         add(rightPanel, BorderLayout.EAST);
     }
 
-    private JPanel getJPanel() {
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 0));
-        leftPanel.setOpaque(false);
-
-        JLabel userLabel = new JLabel(activeScreen);
-        userLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        userLabel.setForeground(Color.BLACK);
-
-        // --- Navigation Buttons ---
-
-        JButton homeButton = new NavButton("Home");
-        homeButton.addActionListener(e -> {
-            if (MainActivity.getInstance() != null) {
-                MainActivity.getInstance().showScreen(MainActivity.USER_SCREEN);
-            }
-        });
-
-        // ADDED: Purchase History Button in Navigation Bar
-        JButton purchaseHistoryButton = new NavButton("Purchase History");
-        purchaseHistoryButton.addActionListener(e -> {
-            if (MainActivity.getInstance() != null) {
-                // Links to the InvoiceScreen
-                MainActivity.getInstance().showScreen(MainActivity.INVOICE_SCREEN);
-            }
-        });
-
-        leftPanel.add(userLabel);
-        leftPanel.add(homeButton);
-        leftPanel.add(purchaseHistoryButton);
-
-        return leftPanel;
+    /**
+     * Sets a listener that triggers whenever the search text changes.
+     */
+    public void setSearchListener(Consumer<String> listener) {
+        this.searchListener = listener;
     }
 
-    private static JTextField getSearchField() {
+    private JTextField getSearchField() {
         String placeholder = "Search";
         JTextField searchField = new JTextField(20);
         searchField.setText(placeholder);
@@ -81,19 +57,37 @@ public class NavBarPanel extends JPanel {
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)
         ));
 
-        searchField.addFocusListener(new java.awt.event.FocusAdapter() {
+        searchField.addFocusListener(new FocusAdapter() {
             @Override
-            public void focusGained(java.awt.event.FocusEvent evt) {
+            public void focusGained(FocusEvent evt) {
                 if (searchField.getText().equals(placeholder)) {
                     searchField.setText("");
                     searchField.setForeground(Color.BLACK);
                 }
             }
             @Override
-            public void focusLost(java.awt.event.FocusEvent evt) {
+            public void focusLost(FocusEvent evt) {
                 if (searchField.getText().isEmpty()) {
                     searchField.setText(placeholder);
                     searchField.setForeground(Color.GRAY);
+                }
+            }
+        });
+
+        // Add DocumentListener to detect typing
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) { onChange(); }
+            public void removeUpdate(DocumentEvent e) { onChange(); }
+            public void changedUpdate(DocumentEvent e) { onChange(); }
+
+            private void onChange() {
+                if (searchListener != null) {
+                    // Ignore placeholder text
+                    if (searchField.getForeground() == Color.GRAY) {
+                        searchListener.accept("");
+                    } else {
+                        searchListener.accept(searchField.getText());
+                    }
                 }
             }
         });
@@ -112,6 +106,35 @@ public class NavBarPanel extends JPanel {
         return searchField;
     }
 
+    private JPanel getJPanel() {
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 0));
+        leftPanel.setOpaque(false);
+
+        JLabel userLabel = new JLabel(activeScreen);
+        userLabel.setFont(new Font("Arial", Font.BOLD, 28));
+        userLabel.setForeground(Color.BLACK);
+
+        JButton homeButton = new NavButton("Home");
+        homeButton.addActionListener(e -> {
+            if (MainActivity.getInstance() != null) {
+                MainActivity.getInstance().showScreen(MainActivity.USER_SCREEN);
+            }
+        });
+
+        JButton purchaseHistoryButton = new NavButton("Purchase History");
+        purchaseHistoryButton.addActionListener(e -> {
+            if (MainActivity.getInstance() != null) {
+                MainActivity.getInstance().showScreen(MainActivity.INVOICE_SCREEN);
+            }
+        });
+
+        leftPanel.add(userLabel);
+        leftPanel.add(homeButton);
+        leftPanel.add(purchaseHistoryButton);
+
+        return leftPanel;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
@@ -126,7 +149,7 @@ public class NavBarPanel extends JPanel {
         public NavButton(String text) {
             super(text);
             setFont(new Font("Arial", Font.PLAIN, 16));
-            setForeground(Color.WHITE);
+            setForeground(Color.BLACK); // Set text to BLACK as requested
             setFocusPainted(false);
             setBorderPainted(false);
             setContentAreaFilled(false);
@@ -134,10 +157,10 @@ public class NavBarPanel extends JPanel {
 
             addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    setForeground(Color.BLACK); // Hover effect
+                    setForeground(Color.WHITE); // Hover effect
                 }
                 public void mouseExited(java.awt.event.MouseEvent evt) {
-                    setForeground(Color.WHITE);
+                    setForeground(Color.BLACK); // Back to Black
                 }
             });
         }

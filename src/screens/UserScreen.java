@@ -9,6 +9,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import main.MainActivity;
 
+/**
+ * UserScreen class with Search enabled and Top-Bar Layout.
+ */
 public class UserScreen extends JPanel {
 
     private Map<String, Double> itemValueMap;
@@ -24,6 +27,9 @@ public class UserScreen extends JPanel {
     private JTextField nameInput;
     private JTextField contactInput;
     private JTextField addressInput;
+
+    // Stores current search text
+    private String currentSearchText = "";
 
     public UserScreen() {
         setLayout(new BorderLayout());
@@ -41,13 +47,17 @@ public class UserScreen extends JPanel {
         loadInventoryData();
         selectedCategories.addAll(Arrays.asList("1", "2", "3"));
 
-        // 3. Main container with padding
+        // 3. Main container
         JPanel mainContainer = new JPanel(new BorderLayout());
         mainContainer.setBackground(Color.WHITE);
         mainContainer.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // 4. Navigation Bar
-        JPanel navBarPanel = new NavBarPanel("USER");
+        // 4. Navigation Bar with Search
+        NavBarPanel navBarPanel = new NavBarPanel("USER");
+        navBarPanel.setSearchListener(text -> {
+            this.currentSearchText = text.toLowerCase().trim();
+            refreshTableRows(); // Filter the list when typing
+        });
 
         // 5. Title panel
         JPanel titlePanel = new JPanel(new BorderLayout());
@@ -56,11 +66,11 @@ public class UserScreen extends JPanel {
 
         JLabel titleLabel = new JLabel("Create Purchase");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
+        titleLabel.setForeground(Color.BLACK);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titlePanel.add(titleLabel, BorderLayout.CENTER);
 
         // 6. Main Content Panels
-        JPanel informationInputContainer = getCustomerInfoPanel();
         JPanel invoiceTablePanel = getInvoiceTablePanel();
         JPanel bottomPanel = getBottomPanel();
 
@@ -68,7 +78,6 @@ public class UserScreen extends JPanel {
         JPanel contentPanel = new JPanel(new BorderLayout(0, 15));
         contentPanel.setOpaque(false);
         contentPanel.add(titlePanel, BorderLayout.NORTH);
-        contentPanel.add(informationInputContainer, BorderLayout.BEFORE_FIRST_LINE);
         contentPanel.add(invoiceTablePanel, BorderLayout.CENTER);
         contentPanel.add(bottomPanel, BorderLayout.SOUTH);
 
@@ -159,17 +168,20 @@ public class UserScreen extends JPanel {
     }
 
     private JPanel getCustomerInfoPanel() {
-        JPanel container = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
+        JPanel container = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
         container.setOpaque(false);
 
         JPanel p1 = new JPanel(new BorderLayout(5, 0)); p1.setOpaque(false);
-        p1.add(new JLabel("Name:"), BorderLayout.WEST); nameInput = getInputField(); p1.add(nameInput, BorderLayout.CENTER);
+        JLabel nameLbl = new JLabel("Name:"); nameLbl.setFont(new Font("Arial", Font.BOLD, 14)); nameLbl.setForeground(Color.BLACK);
+        p1.add(nameLbl, BorderLayout.WEST); nameInput = getInputField(); p1.add(nameInput, BorderLayout.CENTER);
 
         JPanel p2 = new JPanel(new BorderLayout(5, 0)); p2.setOpaque(false);
-        p2.add(new JLabel("Contact No.:"), BorderLayout.WEST); contactInput = getInputField(); p2.add(contactInput, BorderLayout.CENTER);
+        JLabel contactLbl = new JLabel("Contact No.:"); contactLbl.setFont(new Font("Arial", Font.BOLD, 14)); contactLbl.setForeground(Color.BLACK);
+        p2.add(contactLbl, BorderLayout.WEST); contactInput = getInputField(); p2.add(contactInput, BorderLayout.CENTER);
 
         JPanel p3 = new JPanel(new BorderLayout(5, 0)); p3.setOpaque(false);
-        p3.add(new JLabel("Address:"), BorderLayout.WEST); addressInput = getInputField(); p3.add(addressInput, BorderLayout.CENTER);
+        JLabel addressLbl = new JLabel("Address:"); addressLbl.setFont(new Font("Arial", Font.BOLD, 14)); addressLbl.setForeground(Color.BLACK);
+        p3.add(addressLbl, BorderLayout.WEST); addressInput = getInputField(); p3.add(addressInput, BorderLayout.CENTER);
 
         container.add(p1); container.add(p2); container.add(p3);
         return container;
@@ -180,7 +192,15 @@ public class UserScreen extends JPanel {
         tablePanel.setOpaque(false);
         tablePanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
+        JPanel topControlPanel = new JPanel(new BorderLayout());
+        topControlPanel.setOpaque(false);
+        topControlPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+
         JPanel categoryPanel = createCategoryTogglePanel();
+        JPanel infoPanel = getCustomerInfoPanel();
+
+        topControlPanel.add(categoryPanel, BorderLayout.WEST);
+        topControlPanel.add(infoPanel, BorderLayout.CENTER);
 
         JPanel headerPanel = new JPanel(new GridLayout(1, 4, 5, 0));
         headerPanel.setBackground(new Color(200, 200, 200));
@@ -189,6 +209,7 @@ public class UserScreen extends JPanel {
         for (String header : headers) {
             JLabel headerLabel = new JLabel(header, SwingConstants.CENTER);
             headerLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            headerLabel.setForeground(Color.BLACK);
             headerPanel.add(headerLabel);
         }
 
@@ -212,21 +233,26 @@ public class UserScreen extends JPanel {
         content.add(headerPanel, BorderLayout.NORTH);
         content.add(scrollPane, BorderLayout.CENTER);
 
-        tablePanel.add(categoryPanel, BorderLayout.NORTH);
+        tablePanel.add(topControlPanel, BorderLayout.NORTH);
         tablePanel.add(content, BorderLayout.CENTER);
+
         return tablePanel;
     }
 
     private JPanel createCategoryTogglePanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         panel.setOpaque(false);
-        panel.add(new JLabel("Categories:"));
+        JLabel catLabel = new JLabel("Categories:"); catLabel.setFont(new Font("Arial", Font.BOLD, 12)); catLabel.setForeground(Color.BLACK);
+        panel.add(catLabel);
+
         for (String cat : Arrays.asList("1", "2", "3")) {
             JToggleButton btn = new JToggleButton(cat);
             btn.setSelected(true);
+            btn.setFont(new Font("Arial", Font.PLAIN, 12));
             btn.setPreferredSize(new Dimension(50, 30));
             btn.setBackground(new Color(130, 170, 255));
             btn.setForeground(Color.WHITE);
+            btn.setFocusPainted(false);
             btn.addActionListener(e -> {
                 if (btn.isSelected()) {
                     selectedCategories.add(cat);
@@ -252,7 +278,13 @@ public class UserScreen extends JPanel {
         Collections.sort(sorted);
 
         for (String item : sorted) {
-            if (selectedCategories.contains(itemCategoryMap.get(item))) {
+            // Check Category
+            boolean matchCat = selectedCategories.contains(itemCategoryMap.get(item));
+
+            // Check Search (NEW)
+            boolean matchSearch = currentSearchText.isEmpty() || item.toLowerCase().contains(currentSearchText);
+
+            if (matchCat && matchSearch) {
                 itemsPanel.add(createItemRow(item));
             }
         }
@@ -277,6 +309,11 @@ public class UserScreen extends JPanel {
         if (qtyAvailable > 0) {
             JSpinner s = new JSpinner(new SpinnerNumberModel(0, 0, qtyAvailable, 1));
             s.setFont(new Font("Arial", Font.PLAIN, 13));
+            JComponent editor = s.getEditor();
+            if (editor instanceof JSpinner.DefaultEditor) {
+                ((JSpinner.DefaultEditor)editor).getTextField().setForeground(Color.BLACK);
+            }
+
             quantitySpinners.add(s);
             spinnerToItemMap.put(s, itemName);
             s.addChangeListener(e -> {
@@ -312,17 +349,14 @@ public class UserScreen extends JPanel {
 
         JPanel totals = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
         totals.setOpaque(false);
-        totals.add(new JLabel("Overall Total:"));
-        overallTotalLabel = getStyledLabel("0.00");
-        totals.add(overallTotalLabel);
-        totals.add(new JLabel("Total Items:"));
-        totalItemsLabel = getStyledLabel("0");
-        totals.add(totalItemsLabel);
+        JLabel l1 = new JLabel("Overall Total:"); l1.setForeground(Color.BLACK); totals.add(l1);
+        overallTotalLabel = getStyledLabel("0.00"); totals.add(overallTotalLabel);
+
+        JLabel l2 = new JLabel("Total Items:"); l2.setForeground(Color.BLACK); totals.add(l2);
+        totalItemsLabel = getStyledLabel("0"); totals.add(totalItemsLabel);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         buttons.setOpaque(false);
-
-        // REMOVED PURCHASE HISTORY BUTTON FROM HERE
 
         JButton checkoutButton = createActionButton("Checkout", new Color(34, 139, 34));
         checkoutButton.addActionListener(e -> generateInvoice());
@@ -362,6 +396,7 @@ public class UserScreen extends JPanel {
     private static JTextField getInputField() {
         JTextField f = new JTextField("", 15);
         f.setFont(new Font("Arial", Font.PLAIN, 14));
+        f.setForeground(Color.BLACK);
         f.setBorder(BorderFactory.createCompoundBorder(new RoundedBorder(15, new Color(200, 200, 200)), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         return f;
     }
@@ -369,6 +404,7 @@ public class UserScreen extends JPanel {
     private static JLabel getStyledLabel(String text) {
         JLabel l = new JLabel(text, SwingConstants.CENTER);
         l.setFont(new Font("Arial", Font.PLAIN, 13));
+        l.setForeground(Color.BLACK);
         l.setBackground(new Color(245, 245, 245));
         l.setOpaque(true);
         l.setBorder(BorderFactory.createCompoundBorder(new RoundedBorder(12, new Color(180, 180, 180)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));

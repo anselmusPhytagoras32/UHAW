@@ -12,6 +12,7 @@ public class AdminInventoryScreen extends JPanel {
     private DefaultTableModel tableModel;
     private JTable inventoryTable;
     private java.util.List<InventoryItem> inventoryItems;
+    private String currentSearchText = "";
 
     private static class InventoryItem {
         String itemName;
@@ -40,7 +41,13 @@ public class AdminInventoryScreen extends JPanel {
         mainContainer.setBackground(Color.WHITE);
         mainContainer.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        JPanel navBarPanel = new AdminNavBarPanel("Inventory");
+        // --- SETUP NAV BAR WITH SEARCH ---
+        AdminNavBarPanel navBarPanel = new AdminNavBarPanel("Inventory");
+        navBarPanel.setSearchListener(text -> {
+            this.currentSearchText = text.toLowerCase().trim();
+            populateTable();
+        });
+
         JPanel topPanel = createTopPanel();
         JPanel tablePanel = createTablePanel();
 
@@ -55,23 +62,9 @@ public class AdminInventoryScreen extends JPanel {
         add(mainContainer);
     }
 
-    /**
-     * Public method to allow external refreshing (e.g. from MainActivity).
-     */
     public void refreshData() {
         loadInventoryData();
-        if (tableModel != null) {
-            tableModel.setRowCount(0);
-            for (InventoryItem item : inventoryItems) {
-                tableModel.addRow(new Object[]{
-                        item.itemName,
-                        item.description,
-                        String.format("PHP %.2f", item.value),
-                        item.category,
-                        item.quantity
-                });
-            }
-        }
+        populateTable();
     }
 
     private void loadInventoryData() {
@@ -197,15 +190,7 @@ public class AdminInventoryScreen extends JPanel {
             public boolean isCellEditable(int row, int column) { return false; }
         };
 
-        for (InventoryItem item : inventoryItems) {
-            tableModel.addRow(new Object[]{
-                    item.itemName,
-                    item.description,
-                    String.format("PHP %.2f", item.value),
-                    item.category,
-                    item.quantity
-            });
-        }
+        populateTable();
 
         inventoryTable = new JTable(tableModel);
         inventoryTable.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -244,6 +229,23 @@ public class AdminInventoryScreen extends JPanel {
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
         tablePanel.add(scrollPane, BorderLayout.CENTER);
         return tablePanel;
+    }
+
+    private void populateTable() {
+        if (tableModel == null) return;
+        tableModel.setRowCount(0);
+
+        for (InventoryItem item : inventoryItems) {
+            if (currentSearchText.isEmpty() || item.itemName.toLowerCase().contains(currentSearchText)) {
+                tableModel.addRow(new Object[]{
+                        item.itemName,
+                        item.description,
+                        String.format("PHP %.2f", item.value),
+                        item.category,
+                        item.quantity
+                });
+            }
+        }
     }
 
     private void showAddItemDialog() {
@@ -288,8 +290,8 @@ public class AdminInventoryScreen extends JPanel {
 
                 InventoryItem newItem = new InventoryItem(name, desc, value, category, qty);
                 inventoryItems.add(newItem);
-                tableModel.addRow(new Object[]{name, desc, String.format("PHP %.2f", value), category, qty});
                 saveInventoryData();
+                populateTable();
                 dialog.dispose();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(dialog, "Invalid input", "Error", JOptionPane.ERROR_MESSAGE);
@@ -312,7 +314,16 @@ public class AdminInventoryScreen extends JPanel {
             return;
         }
 
-        InventoryItem item = inventoryItems.get(selectedRow);
+        String selectedName = (String) tableModel.getValueAt(selectedRow, 0);
+        InventoryItem item = null;
+        for(InventoryItem i : inventoryItems) {
+            if(i.itemName.equals(selectedName)) {
+                item = i;
+                break;
+            }
+        }
+        if (item == null) return;
+
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Edit Item", true);
         dialog.setLayout(new BorderLayout());
         dialog.setSize(400, 450);
@@ -338,21 +349,17 @@ public class AdminInventoryScreen extends JPanel {
         JButton saveButton = new JButton("Save");
         JButton cancelButton = new JButton("Cancel");
 
+        InventoryItem finalItem = item;
         saveButton.addActionListener(e -> {
             try {
-                item.itemName = nameField.getText().trim();
-                item.description = descField.getText().trim();
-                item.value = Double.parseDouble(valueField.getText().trim());
-                item.category = (String) categoryCombo.getSelectedItem();
-                item.quantity = Integer.parseInt(qtyField.getText().trim());
-
-                tableModel.setValueAt(item.itemName, selectedRow, 0);
-                tableModel.setValueAt(item.description, selectedRow, 1);
-                tableModel.setValueAt(String.format("PHP %.2f", item.value), selectedRow, 2);
-                tableModel.setValueAt(item.category, selectedRow, 3);
-                tableModel.setValueAt(item.quantity, selectedRow, 4);
+                finalItem.itemName = nameField.getText().trim();
+                finalItem.description = descField.getText().trim();
+                finalItem.value = Double.parseDouble(valueField.getText().trim());
+                finalItem.category = (String) categoryCombo.getSelectedItem();
+                finalItem.quantity = Integer.parseInt(qtyField.getText().trim());
 
                 saveInventoryData();
+                populateTable();
                 dialog.dispose();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(dialog, "Invalid input", "Error", JOptionPane.ERROR_MESSAGE);
@@ -372,9 +379,10 @@ public class AdminInventoryScreen extends JPanel {
         int selectedRow = inventoryTable.getSelectedRow();
         if (selectedRow != -1) {
             if (JOptionPane.showConfirmDialog(this, "Are you sure?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                inventoryItems.remove(selectedRow);
-                tableModel.removeRow(selectedRow);
+                String selectedName = (String) tableModel.getValueAt(selectedRow, 0);
+                inventoryItems.removeIf(i -> i.itemName.equals(selectedName));
                 saveInventoryData();
+                populateTable();
             }
         }
     }
@@ -383,6 +391,10 @@ public class AdminInventoryScreen extends JPanel {
         try {
             File file = new File("src/items/inventory.json");
             if (!file.exists()) file = new File("items/inventory.json");
+            if (!file.exists()) {
+                file = new File("../items/inventory.json");
+                file.getParentFile().mkdirs();
+            }
 
             PrintWriter writer = new PrintWriter(new FileWriter(file));
             writer.println("[");
@@ -401,7 +413,6 @@ public class AdminInventoryScreen extends JPanel {
             writer.println("]");
             writer.close();
 
-            // --- AUTO REFRESH TRIGGER ---
             if (MainActivity.getInstance() != null) {
                 MainActivity.getInstance().refreshAllScreens();
             }
