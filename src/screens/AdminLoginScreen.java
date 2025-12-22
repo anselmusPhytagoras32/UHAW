@@ -9,13 +9,10 @@ import main.MainActivity;
  * Displays a login form with username and password fields.
  *
  * @author Your Name
- * @version 1.0
+ * @version 1.1
  */
 public class AdminLoginScreen extends JPanel {
 
-    /**
-     * Constructor that initializes and displays the AdminLoginScreen.
-     */
     public AdminLoginScreen() {
         setLayout(new BorderLayout());
         setBackground(new Color(245, 245, 250));
@@ -48,10 +45,6 @@ public class AdminLoginScreen extends JPanel {
         JTextField usernameField = new JTextField(20);
         usernameField.setFont(new Font("Arial", Font.PLAIN, 14));
         usernameField.setMaximumSize(new Dimension(300, 35));
-        usernameField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180), 1),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        ));
 
         // Password field
         JLabel passwordLabel = new JLabel("Password:");
@@ -62,10 +55,6 @@ public class AdminLoginScreen extends JPanel {
         JPasswordField passwordField = new JPasswordField(20);
         passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
         passwordField.setMaximumSize(new Dimension(300, 35));
-        passwordField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180), 1),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        ));
 
         // Login button
         JButton loginButton = new JButton("Login");
@@ -74,16 +63,15 @@ public class AdminLoginScreen extends JPanel {
         loginButton.setBackground(new Color(130, 170, 255));
         loginButton.setForeground(Color.WHITE);
         loginButton.setFocusPainted(false);
-        loginButton.setBorder(BorderFactory.createEmptyBorder(12, 50, 12, 50));
         loginButton.setMaximumSize(new Dimension(200, 45));
         loginButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Back to User button
-        JButton backButton = new JButton("Back to User Side");
+        // --- UPDATED BACK BUTTON ---
+        JButton backButton = new JButton("Back to Main Menu");
         backButton.setFont(new Font("Arial", Font.PLAIN, 14));
         backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.setBackground(Color.WHITE);
-        backButton.setForeground(new Color(130, 170, 255));
+        backButton.setForeground(new Color(100, 100, 100)); // Grey color
         backButton.setFocusPainted(false);
         backButton.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
         backButton.setMaximumSize(new Dimension(200, 40));
@@ -100,18 +88,26 @@ public class AdminLoginScreen extends JPanel {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
 
-            // Simple authentication (in real app, use proper security)
+            // Simple authentication
             if (username.equals("admin") && password.equals("admin123")) {
                 errorLabel.setText(" ");
+                // Clear fields
+                usernameField.setText("");
+                passwordField.setText("");
                 MainActivity.getInstance().showScreen(MainActivity.ADMIN_DASHBOARD_SCREEN);
             } else {
                 errorLabel.setText("Invalid username or password");
             }
         });
 
-        // Back button action
+        // --- UPDATED BACK ACTION ---
         backButton.addActionListener(e -> {
-            MainActivity.getInstance().showScreen(MainActivity.USER_SCREEN);
+            // Clear fields/errors when leaving
+            errorLabel.setText(" ");
+            usernameField.setText("");
+            passwordField.setText("");
+            // Navigate to Main Menu
+            MainActivity.getInstance().showScreen(MainActivity.MAIN_MENU_SCREEN);
         });
 
         // Add components to login card
