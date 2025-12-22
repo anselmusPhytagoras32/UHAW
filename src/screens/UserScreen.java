@@ -79,9 +79,6 @@ public class UserScreen extends JPanel {
         add(mainContainer);
     }
 
-    /**
-     * Public refresh method called by MainActivity
-     */
     public void refreshData() {
         loadInventoryData();
         refreshTableRows();
@@ -325,13 +322,11 @@ public class UserScreen extends JPanel {
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         buttons.setOpaque(false);
 
-        JButton historyButton = createActionButton("History", new Color(100, 100, 100));
-        historyButton.addActionListener(e -> MainActivity.getInstance().showScreen(MainActivity.PURCHASE_HISTORY_SCREEN));
+        // REMOVED PURCHASE HISTORY BUTTON FROM HERE
 
         JButton checkoutButton = createActionButton("Checkout", new Color(34, 139, 34));
         checkoutButton.addActionListener(e -> generateInvoice());
 
-        buttons.add(historyButton);
         buttons.add(checkoutButton);
 
         bottomPanel.add(totals, BorderLayout.WEST);
@@ -416,7 +411,6 @@ public class UserScreen extends JPanel {
             JOptionPane.showMessageDialog(this, "Invoice Generated!", "Success", JOptionPane.INFORMATION_MESSAGE);
             nameInput.setText(""); contactInput.setText(""); addressInput.setText("");
 
-            // --- AUTO REFRESH TRIGGER ---
             if (MainActivity.getInstance() != null) {
                 MainActivity.getInstance().refreshAllScreens();
             }
