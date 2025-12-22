@@ -124,14 +124,6 @@ public class MainMenuScreen extends JPanel {
         menuContainer.add(createStyledMenuButton("Exit System", "Close Application", () ->
                 System.exit(0)));
 
-        // Copyright footer
-        JLabel copyLabel = new JLabel("© 2025 Peter Loves Carl Co.");
-        copyLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        copyLabel.setForeground(Color.LIGHT_GRAY);
-        copyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        copyLabel.setBorder(BorderFactory.createEmptyBorder(40, 0, 0, 0));
-        menuContainer.add(copyLabel);
-
         rightPanel.add(menuContainer);
 
         // Add split panels to main layout
