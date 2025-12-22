@@ -1,11 +1,10 @@
 package main;
 
-import screens.UserScreen;
+import java.awt.*;
+import javax.swing.*;
 import screens.InvoiceScreen;
 import screens.SummaryScreen;
-
-import javax.swing.*;
-import java.awt.*;
+import screens.UserScreen;
 
 /**
  * MainActivity serves as the main entry point and navigation controller
