@@ -3,6 +3,9 @@ package screens;
 import components.NavBarPanel; // Using the external component
 import java.awt.*;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.*;
 import main.MainActivity;
@@ -23,6 +26,9 @@ public class UserScreen extends JPanel {
     private JLabel overallTotalLabel;
     private JLabel totalItemsLabel;
     private java.util.List<JSpinner> quantitySpinners;
+    private JTextField nameInput;
+    private JTextField contactInput;
+    private JTextField addressInput;
 
     public UserScreen() {
         setLayout(new BorderLayout());
@@ -177,22 +183,25 @@ public class UserScreen extends JPanel {
         nameContainer.setOpaque(false);
         JLabel nameLabel = new JLabel("Name:");
         nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        nameInput = getInputField();
         nameContainer.add(nameLabel, BorderLayout.WEST);
-        nameContainer.add(getInputField(), BorderLayout.CENTER);
+        nameContainer.add(nameInput, BorderLayout.CENTER);
 
         JPanel contactContainer = new JPanel(new BorderLayout(5, 0));
         contactContainer.setOpaque(false);
         JLabel contactLabel = new JLabel("Contact No.:");
         contactLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        contactInput = getInputField();
         contactContainer.add(contactLabel, BorderLayout.WEST);
-        contactContainer.add(getInputField(), BorderLayout.CENTER);
+        contactContainer.add(contactInput, BorderLayout.CENTER);
 
         JPanel addressContainer = new JPanel(new BorderLayout(5, 0));
         addressContainer.setOpaque(false);
         JLabel addressLabel = new JLabel("Address:");
         addressLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        addressInput = getInputField();
         addressContainer.add(addressLabel, BorderLayout.WEST);
-        addressContainer.add(getInputField(), BorderLayout.CENTER);
+        addressContainer.add(addressInput, BorderLayout.CENTER);
 
         informationInputContainer.add(nameContainer);
         informationInputContainer.add(contactContainer);
@@ -373,13 +382,13 @@ public class UserScreen extends JPanel {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         buttonsPanel.setOpaque(false);
 
-        JButton addToInvoiceButton = createActionButton("Add to Invoice", new Color(130, 170, 255));
-        addToInvoiceButton.addActionListener(e -> MainActivity.getInstance().showScreen(MainActivity.INVOICE_SCREEN));
+        JButton checkoutButton = createActionButton("Checkout", new Color(34, 139, 34));
+        checkoutButton.addActionListener(e -> generateInvoice());
 
         JButton addToSummaryButton = createActionButton("Add to Summary", new Color(130, 170, 255));
         addToSummaryButton.addActionListener(e -> MainActivity.getInstance().showScreen(MainActivity.SUMMARY_SCREEN));
 
-        buttonsPanel.add(addToInvoiceButton);
+        buttonsPanel.add(checkoutButton);
         buttonsPanel.add(addToSummaryButton);
 
         JPanel wrapperPanel = new JPanel();
@@ -461,6 +470,144 @@ public class UserScreen extends JPanel {
         ));
         label.setPreferredSize(new Dimension(100, 30));
         return label;
+    }
+
+    private void generateInvoice() {
+        try {
+            String customerName = nameInput.getText().trim();
+            String contactNo = contactInput.getText().trim();
+            String address = addressInput.getText().trim();
+            
+            if (customerName.isEmpty() || contactNo.isEmpty() || address.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill in all customer information.", "Missing Information", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            SimpleDateFormat invoiceNumFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+            String invoiceNumber = "INV" + invoiceNumFormat.format(new Date());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+            String dueDate = dateFormat.format(new Date());
+            String subject = "Service for " + dateFormat.format(new Date());
+            
+            java.util.List<InvoiceItem> items = new java.util.ArrayList<>();
+            double subtotal = 0.0;
+            int totalQty = 0;
+            
+            Component[] components = itemsPanel.getComponents();
+            for (Component comp : components) {
+                if (comp instanceof JPanel) {
+                    Component[] rowComponents = ((JPanel) comp).getComponents();
+                    if (rowComponents.length >= 4 && rowComponents[0] instanceof JLabel && rowComponents[1] instanceof JSpinner) {
+                        JLabel itemNameLabel = (JLabel) rowComponents[0];
+                        JSpinner spinner = (JSpinner) rowComponents[1];
+                        JLabel valueLabel = (JLabel) rowComponents[2];
+                        
+                        String itemName = itemNameLabel.getText().trim();
+                        int qty = (Integer) spinner.getValue();
+                        
+                        if (qty > 0 && itemName != null && !itemName.isEmpty() && !valueLabel.getText().isEmpty()) {
+                            double unitPrice = Double.parseDouble(valueLabel.getText().trim());
+                            double amount = qty * unitPrice;
+                            items.add(new InvoiceItem(itemName, qty, unitPrice, amount));
+                            subtotal += amount;
+                            totalQty += qty;
+                        }
+                    }
+                }
+            }
+            
+            if (items.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please add at least one item to the invoice.", "No Items", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            double discount = subtotal * 0.10;
+            double total = subtotal - discount;
+            
+            File invoicesDir = new File("invoices");
+            if (!invoicesDir.exists()) {
+                invoicesDir.mkdirs();
+            }
+            
+            File invoiceFile = new File(invoicesDir, invoiceNumber + ".txt");
+            PrintWriter writer = new PrintWriter(new FileWriter(invoiceFile));
+            
+            writer.println("=".repeat(80));
+            writer.println();
+            writer.println("  " + invoiceNumber);
+            writer.println();
+            writer.println("  Due date" + " ".repeat(36) + "Subject");
+            writer.println("  " + dueDate + " ".repeat(30 - dueDate.length()) + subject);
+            writer.println();
+            writer.println("  Billed to" + " ".repeat(37) + "Currency");
+            writer.println("  " + customerName + " ".repeat(Math.max(1, 30 - customerName.length())) + "PHP - Philippine Pesos");
+            writer.println("  " + contactNo);
+            writer.println("  " + address);
+            writer.println();
+            writer.println("  " + "-".repeat(76));
+            writer.println();
+            writer.println("  DESCRIPTION" + " ".repeat(30) + "QTY" + " ".repeat(8) + "UNIT PRICE" + " ".repeat(8) + "AMOUNT");
+            writer.println();
+            
+            for (InvoiceItem item : items) {
+                String desc = item.description;
+                if (desc.length() > 35) {
+                    desc = desc.substring(0, 32) + "...";
+                }
+                writer.printf("  %-40s %3d %,15.3f PHP %,15.3f PHP%n", desc, item.qty, item.unitPrice, item.amount);
+            }
+            
+            writer.println();
+            writer.println(" ".repeat(55) + "Subtotal" + String.format("%,20.3f PHP", subtotal));
+            writer.println(" ".repeat(55) + "Discount -10%" + String.format("%,15.3f PHP", discount));
+            writer.println(" ".repeat(55) + "Total" + String.format("%,23.3f PHP", total));
+            writer.println(" ".repeat(55) + "Amount due" + String.format("%,16.3f PHP", total));
+            writer.println();
+            writer.println("  " + "-".repeat(76));
+            writer.println();
+            writer.println("  Attachment");
+            writer.println();
+            writer.println("  [📄] Product list.PDF");
+            writer.println("       21.2kb");
+            writer.println();
+            writer.println("=".repeat(80));
+            
+            writer.close();
+            
+            JOptionPane.showMessageDialog(this, 
+                "Invoice generated successfully!\n\nInvoice: " + invoiceNumber + ".txt\nTotal: PHP " + String.format("%,.2f", total),
+                "Invoice Created", 
+                JOptionPane.INFORMATION_MESSAGE);
+            
+            nameInput.setText("");
+            contactInput.setText("");
+            addressInput.setText("");
+            for (JSpinner spinner : quantitySpinners) {
+                spinner.setValue(0);
+            }
+            updateOverallTotals();
+                
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Error generating invoice: " + ex.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
+    
+    private static class InvoiceItem {
+        String description;
+        int qty;
+        double unitPrice;
+        double amount;
+        
+        InvoiceItem(String description, int qty, double unitPrice, double amount) {
+            this.description = description;
+            this.qty = qty;
+            this.unitPrice = unitPrice;
+            this.amount = amount;
+        }
     }
 
     static class RoundedBorder extends javax.swing.border.AbstractBorder {

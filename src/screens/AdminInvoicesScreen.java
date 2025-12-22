@@ -1,9 +1,12 @@
 package screens;
 
 import components.AdminNavBarPanel;
+import java.awt.*;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
-import java.awt.*;
 
 /**
  * AdminInvoicesScreen displays all invoices in the system.
@@ -104,10 +107,8 @@ public class AdminInvoicesScreen extends JPanel {
             }
         };
 
-        // Add sample data (in real app, this would come from database)
-        tableModel.addRow(new Object[]{"INV001", "Peter Loves Carl Co.", "John Doe", "2025-12-20", "$450.00", "Paid"});
-        tableModel.addRow(new Object[]{"INV002", "Peter Loves Carl Co.", "Jane Smith", "2025-12-21", "$750.50", "Pending"});
-        tableModel.addRow(new Object[]{"INV003", "Peter Loves Carl Co.", "Bob Wilson", "2025-12-22", "$299.99", "Paid"});
+        // Load actual invoice data from files
+        loadInvoicesFromFolder();
 
         invoiceTable = new JTable(tableModel);
         invoiceTable.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -147,8 +148,191 @@ public class AdminInvoicesScreen extends JPanel {
         JScrollPane scrollPane = new JScrollPane(invoiceTable);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
+        // Add action buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        buttonPanel.setOpaque(false);
+
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.setFont(new Font("Arial", Font.BOLD, 14));
+        refreshButton.setBackground(new Color(130, 170, 255));
+        refreshButton.setForeground(Color.WHITE);
+        refreshButton.setFocusPainted(false);
+        refreshButton.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        refreshButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        refreshButton.addActionListener(e -> refreshInvoices());
+
+        JButton viewButton = new JButton("View Invoice");
+        viewButton.setFont(new Font("Arial", Font.BOLD, 14));
+        viewButton.setBackground(new Color(34, 139, 34));
+        viewButton.setForeground(Color.WHITE);
+        viewButton.setFocusPainted(false);
+        viewButton.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        viewButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        viewButton.addActionListener(e -> viewSelectedInvoice());
+
+        buttonPanel.add(refreshButton);
+        buttonPanel.add(viewButton);
+
         tablePanel.add(scrollPane, BorderLayout.CENTER);
+        tablePanel.add(buttonPanel, BorderLayout.SOUTH);
 
         return tablePanel;
+    }
+
+    /**
+     * Loads all invoices from the invoices folder.
+     */
+    private void loadInvoicesFromFolder() {
+        tableModel.setRowCount(0);
+        File invoicesDir = new File("invoices");
+        
+        if (!invoicesDir.exists() || !invoicesDir.isDirectory()) {
+            return;
+        }
+        
+        File[] invoiceFiles = invoicesDir.listFiles((dir, name) -> name.endsWith(".txt"));
+        if (invoiceFiles == null || invoiceFiles.length == 0) {
+            return;
+        }
+        
+        Arrays.sort(invoiceFiles, (a, b) -> Long.compare(b.lastModified(), a.lastModified()));
+        
+        for (File file : invoiceFiles) {
+            try {
+                InvoiceData data = parseInvoiceFile(file);
+                if (data != null) {
+                    tableModel.addRow(new Object[]{
+                        data.invoiceId,
+                        "Peter Loves Carl Co.",
+                        data.customerName,
+                        data.date,
+                        String.format("IDR %,.2f", data.totalAmount),
+                        "Paid"
+                    });
+                }
+            } catch (Exception e) {
+                System.err.println("Error loading invoice: " + file.getName() + " - " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Parses an invoice file and extracts relevant data.
+     */
+    private InvoiceData parseInvoiceFile(File file) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            InvoiceData data = new InvoiceData();
+            String line;
+            int lineNum = 0;
+            
+            while ((line = reader.readLine()) != null) {
+                lineNum++;
+                line = line.trim();
+                
+                if (lineNum == 3 && line.startsWith("INV")) {
+                    data.invoiceId = line;
+                }
+                else if (line.contains("Billed to")) {
+                    String nextLine = reader.readLine();
+                    if (nextLine != null) {
+                        String[] parts = nextLine.trim().split("\\s{2,}");
+                        if (parts.length > 0) {
+                            data.customerName = parts[0].trim();
+                        }
+                    }
+                }
+                else if (line.contains("Amount due")) {
+                    String amountStr = line.substring(line.indexOf("Amount due") + 10).trim();
+                    amountStr = amountStr.replace("IDR", "").replace(",", "").trim();
+                    try {
+                        data.totalAmount = Double.parseDouble(amountStr);
+                    } catch (NumberFormatException e) {
+                        data.totalAmount = 0.0;
+                    }
+                }
+            }
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            data.date = sdf.format(new Date(file.lastModified()));
+            
+            return data;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Refreshes the invoice list.
+     */
+    private void refreshInvoices() {
+        loadInvoicesFromFolder();
+        JOptionPane.showMessageDialog(this, 
+            "Invoice list refreshed!",
+            "Refresh Complete", 
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
+     * Views the selected invoice file.
+     */
+    private void viewSelectedInvoice() {
+        int selectedRow = invoiceTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, 
+                "Please select an invoice to view.",
+                "No Selection", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        String invoiceId = (String) tableModel.getValueAt(selectedRow, 0);
+        File invoiceFile = new File("invoices", invoiceId + ".txt");
+        
+        if (!invoiceFile.exists()) {
+            JOptionPane.showMessageDialog(this, 
+                "Invoice file not found: " + invoiceFile.getName(),
+                "File Not Found", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        try {
+            StringBuilder content = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new FileReader(invoiceFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line).append("\n");
+                }
+            }
+            
+            JTextArea textArea = new JTextArea(content.toString());
+            textArea.setEditable(false);
+            textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+            textArea.setCaretPosition(0);
+            
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setPreferredSize(new Dimension(700, 600));
+            
+            JOptionPane.showMessageDialog(this, 
+                scrollPane,
+                "Invoice: " + invoiceId, 
+                JOptionPane.PLAIN_MESSAGE);
+                
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, 
+                "Error reading invoice file: " + e.getMessage(),
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Inner class to store invoice data.
+     */
+    private static class InvoiceData {
+        String invoiceId = "";
+        String customerName = "Unknown";
+        String date = "";
+        double totalAmount = 0.0;
     }
 }
