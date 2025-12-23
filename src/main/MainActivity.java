@@ -60,7 +60,6 @@ public class MainActivity extends JFrame {
         AdminLoginScreen adminLoginScreen = new AdminLoginScreen();
         AdminDashboardScreen adminDashboardScreen = new AdminDashboardScreen();
         AdminInvoicesScreen adminInvoicesScreen = new AdminInvoicesScreen();
-        AdminUsersScreen adminUsersScreen = new AdminUsersScreen();
 
         // --- 3. Add User Side Screens to CardPanel ---
         cardPanel.add(userScreen, USER_SCREEN);
@@ -76,7 +75,6 @@ public class MainActivity extends JFrame {
         cardPanel.add(adminDashboardScreen, ADMIN_DASHBOARD_SCREEN);
         cardPanel.add(adminInventoryScreen, ADMIN_INVENTORY_SCREEN);
         cardPanel.add(adminInvoicesScreen, ADMIN_INVOICES_SCREEN);
-        cardPanel.add(adminUsersScreen, ADMIN_USERS_SCREEN);
 
         // Add card panel to frame
         add(cardPanel);
