@@ -39,9 +39,14 @@ public class MainActivity extends JFrame {
 
         setTitle("Invoice Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1200, 720);
-        setMinimumSize(new Dimension(1200, 600));
+        
+        // Set a larger initial size and minimum size to ensure everything fits
+        setSize(1400, 800);
+        setMinimumSize(new Dimension(1850, 700)); // Increased minimum size
         setLocationRelativeTo(null);
+
+        // Use BorderLayout for the main frame
+        setLayout(new BorderLayout());
 
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
@@ -72,13 +77,23 @@ public class MainActivity extends JFrame {
         cardPanel.add(adminInventoryScreen, ADMIN_INVENTORY_SCREEN);
         cardPanel.add(adminInvoicesScreen, ADMIN_INVOICES_SCREEN);
 
-        // Add card panel to frame
-        add(cardPanel);
+        // Add card panel to frame with some padding
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        mainPanel.add(cardPanel, BorderLayout.CENTER);
+        
+        add(mainPanel, BorderLayout.CENTER);
 
         // --- 5. Show Initial Screen (Main Menu) ---
         showScreen(MAIN_MENU_SCREEN);
 
+        // Center the window on screen
+        setLocationRelativeTo(null);
         setVisible(true);
+        
+        // Ensure proper sizing
+        pack();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     /**
@@ -88,10 +103,24 @@ public class MainActivity extends JFrame {
     public void refreshAllScreens() {
         if (userScreen != null) userScreen.refreshData();
         if (adminInventoryScreen != null) adminInventoryScreen.refreshData();
+        if (invoiceScreen != null) invoiceScreen.refreshData();
     }
 
     public void showScreen(String screenName) {
         cardLayout.show(cardPanel, screenName);
+        
+        // Refresh the screen when shown
+        switch (screenName) {
+            case USER_SCREEN:
+                if (userScreen != null) userScreen.refreshData();
+                break;
+            case INVOICE_SCREEN:
+                if (invoiceScreen != null) invoiceScreen.refreshData();
+                break;
+            case ADMIN_INVENTORY_SCREEN:
+                if (adminInventoryScreen != null) adminInventoryScreen.refreshData();
+                break;
+        }
     }
 
     public static MainActivity getInstance() {

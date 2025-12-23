@@ -12,37 +12,34 @@ public class InvoiceScreen extends JPanel {
     private DefaultTableModel tableModel;
     private JTable purchaseTable;
     private String currentSearchText = "";
-    private NavBarPanel navBarPanel; // Store reference to nav bar
+    private NavBarPanel navBarPanel;
 
-    /**
-     * Constructor that initializes and displays the PurchaseHistoryScreen.
-     * Sets up the navigation bar, title, and purchase history table.
-     */
     public InvoiceScreen() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
-        // Main container
         JPanel mainContainer = new JPanel(new BorderLayout());
         mainContainer.setBackground(Color.WHITE);
         mainContainer.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Navigation bar with search listener
         navBarPanel = new NavBarPanel("Purchase History");
         
-        // Title and action buttons panel
         JPanel topPanel = createTopPanel();
-
-        // Table panel
         JPanel tablePanel = createTablePanel();
 
-        // Set search listener AFTER table is created
         navBarPanel.setSearchListener(text -> {
-            this.currentSearchText = text.toLowerCase().trim();
+            String searchText = text.trim();
+            
+            if (searchText.isEmpty() || 
+                searchText.equals("Search") || 
+                searchText.equals("Search (YYYY-MM-DD)")) {
+                this.currentSearchText = "";
+            } else {
+                this.currentSearchText = searchText.toLowerCase();
+            }
             loadPurchasesFromFolder();
         });
 
-        // Content panel
         JPanel contentPanel = new JPanel(new BorderLayout(0, 15));
         contentPanel.setOpaque(false);
         contentPanel.add(topPanel, BorderLayout.NORTH);
@@ -53,7 +50,6 @@ public class InvoiceScreen extends JPanel {
 
         add(mainContainer);
         
-        // Add component listener to detect when screen becomes visible
         addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -62,20 +58,14 @@ public class InvoiceScreen extends JPanel {
         });
     }
     
-    /**
-     * Resets the search when screen becomes visible
-     */
-    private void resetSearch() {
+    public void resetSearch() {
+        currentSearchText = "";
         if (navBarPanel != null) {
             navBarPanel.resetSearch();
         }
-        currentSearchText = "";
         loadPurchasesFromFolder();
     }
 
-    /**
-     * Creates the top panel with title and search functionality.
-     */
     private JPanel createTopPanel() {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
@@ -89,9 +79,6 @@ public class InvoiceScreen extends JPanel {
         return topPanel;
     }
 
-    /**
-     * Creates the table panel displaying all purchases.
-     */
     private JPanel createTablePanel() {
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setOpaque(false);
@@ -105,7 +92,6 @@ public class InvoiceScreen extends JPanel {
             }
         };
 
-        // Load actual purchase data from files
         loadPurchasesFromFolder();
 
         purchaseTable = new JTable(tableModel);
@@ -115,11 +101,31 @@ public class InvoiceScreen extends JPanel {
         purchaseTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         purchaseTable.getTableHeader().setBackground(new Color(200, 200, 200));
         purchaseTable.getTableHeader().setReorderingAllowed(false);
+        
+        // Set custom cell renderer to left-align all columns
+        DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+        leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+        
+        // Apply left alignment to all columns
+        for (int i = 0; i < purchaseTable.getColumnCount(); i++) {
+            purchaseTable.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
+        }
+        
+        // Set specific column widths
+        purchaseTable.getColumnModel().getColumn(0).setPreferredWidth(180); // Purchase ID
+        purchaseTable.getColumnModel().getColumn(1).setPreferredWidth(150); // Customer Name
+        purchaseTable.getColumnModel().getColumn(2).setPreferredWidth(100); // Items Count (LEFT ALIGNED)
+        purchaseTable.getColumnModel().getColumn(3).setPreferredWidth(150); // Date
+        purchaseTable.getColumnModel().getColumn(4).setPreferredWidth(120); // Total Amount
+        
+        purchaseTable.setAutoCreateRowSorter(true);
 
         JScrollPane scrollPane = new JScrollPane(purchaseTable);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
-        // Add action buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.setOpaque(false);
 
@@ -150,24 +156,32 @@ public class InvoiceScreen extends JPanel {
         return tablePanel;
     }
 
-    /**
-     * Loads all purchases from the invoices folder with search filter.
-     */
     private void loadPurchasesFromFolder() {
-        if (tableModel == null) return; // Guard against null tableModel
+        if (tableModel == null) return;
         
         tableModel.setRowCount(0);
-        File invoicesDir = new File("invoices");
         
-        if (!invoicesDir.exists()) {
-            invoicesDir = new File("src/main/invoices");
+        File[] possibleDirs = {
+            new File("src/main/invoices"),
+            new File("src/invoices"),
+            new File("invoices"),
+            new File("../invoices"),
+            new File("./invoices")
+        };
+        
+        File invoicesDir = null;
+        for (File dir : possibleDirs) {
+            if (dir.exists() && dir.isDirectory()) {
+                invoicesDir = dir;
+                break;
+            }
         }
         
-        if (!invoicesDir.exists() || !invoicesDir.isDirectory()) {
+        if (invoicesDir == null) {
             return;
         }
         
-        File[] invoiceFiles = invoicesDir.listFiles((dir, name) -> name.endsWith(".txt"));
+        File[] invoiceFiles = invoicesDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".txt"));
         if (invoiceFiles == null || invoiceFiles.length == 0) {
             return;
         }
@@ -177,82 +191,199 @@ public class InvoiceScreen extends JPanel {
         for (File file : invoiceFiles) {
             try {
                 PurchaseData data = parsePurchaseFile(file);
-                if (data != null) {
-                    // Apply search filter - search by Purchase ID, Customer Name, or Date
-                    if (currentSearchText.isEmpty() || 
-                        data.purchaseId.toLowerCase().contains(currentSearchText) ||
-                        data.customerName.toLowerCase().contains(currentSearchText) ||
-                        data.date.contains(currentSearchText)) {
-                        
+                if (data != null && !data.purchaseId.isEmpty()) {
+                    boolean matchesSearch = currentSearchText.isEmpty();
+                    if (!matchesSearch) {
+                        matchesSearch = data.purchaseId.toLowerCase().contains(currentSearchText) ||
+                                       data.customerName.toLowerCase().contains(currentSearchText) ||
+                                       data.date.toLowerCase().contains(currentSearchText);
+                    }
+                    
+                    if (matchesSearch) {
+                        // Item count should be a plain number (no formatting), left-aligned
                         tableModel.addRow(new Object[]{
                             data.purchaseId,
                             data.customerName,
-                            data.itemsCount,
+                            String.valueOf(data.itemsCount), // Plain string, will be left-aligned
                             data.date,
                             String.format("PHP %,.2f", data.totalAmount)
                         });
                     }
                 }
             } catch (Exception e) {
-                System.err.println("Error loading purchase: " + file.getName() + " - " + e.getMessage());
+                System.err.println("Error loading purchase: " + file.getName());
             }
         }
     }
 
-    /**
-     * Parses a purchase file and extracts relevant data.
-     */
     private PurchaseData parsePurchaseFile(File file) {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             PurchaseData data = new PurchaseData();
             String line;
-            int lineNum = 0;
+            boolean inItemsSection = false;
             int itemsCount = 0;
-            
+            double totalAmount = 0.0;
+
             while ((line = reader.readLine()) != null) {
-                lineNum++;
                 line = line.trim();
-                
-                if (lineNum == 3 && line.startsWith("INV")) {
-                    data.purchaseId = line;
-                }
-                else if (line.contains("Billed to")) {
-                    String nextLine = reader.readLine();
-                    if (nextLine != null) {
-                        String[] parts = nextLine.trim().split("\\s{2,}");
-                        if (parts.length > 0) {
-                            data.customerName = parts[0].trim();
+
+                // Find invoice ID - FIXED: Look for "Invoice Number:"
+                if (data.purchaseId.isEmpty()) {
+                    if (line.startsWith("Invoice Number:")) {
+                        String[] parts = line.split("Invoice Number:");
+                        if (parts.length > 1) {
+                            data.purchaseId = parts[1].trim();
                         }
                     }
                 }
-                else if (line.matches("^\\s*[A-Za-z0-9\\s.-]+\\s+\\d+\\s+[0-9,\\.]+\\s+PHP.*")) {
-                    // Count items by matching item rows
-                    itemsCount++;
+
+                // Find customer name - FIXED: Handle the BILL TO: format correctly
+                if (data.customerName.equals("Unknown")) {
+                    if (line.contains("BILL TO:")) {
+                        // Read next line which should contain "Name:"
+                        String nameLine = reader.readLine();
+                        if (nameLine != null) {
+                            nameLine = nameLine.trim();
+                            if (nameLine.startsWith("Name:")) {
+                                String[] parts = nameLine.split("Name:");
+                                if (parts.length > 1) {
+                                    data.customerName = parts[1].trim();
+                                    // Remove trailing comma if present
+                                    if (data.customerName.endsWith(",")) {
+                                        data.customerName = data.customerName.substring(0, data.customerName.length() - 1);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-                else if (line.contains("Amount due")) {
-                    String amountStr = line.substring(line.indexOf("Amount due") + 10).trim();
-                    amountStr = amountStr.replace("PHP", "").replace(",", "").trim();
+
+                // Find date
+                if (line.startsWith("Date:")) {
+                    String[] parts = line.split("Date:");
+                    if (parts.length > 1) {
+                        data.date = parts[1].trim();
+                    }
+                }
+
+                // Find items section - FIXED: Look for "DESCRIPTION    QTY    UNIT PRICE    AMOUNT"
+                if (line.contains("DESCRIPTION") && line.contains("QTY") && 
+                    line.contains("UNIT PRICE") && line.contains("AMOUNT")) {
+                    inItemsSection = true;
+                    continue;
+                }
+
+                // Count items in the items section - FIXED: Better detection
+                if (inItemsSection) {
+                    // End of items section is a line with "---" or "TOTAL"
+                    if (line.contains("---") || line.startsWith("TOTAL")) {
+                        inItemsSection = false;
+                    } 
+                    // Count non-empty lines that look like item rows
+                    else if (!line.isEmpty()) {
+                        // Item rows have: item name, quantity, "PHP X.XX", "PHP X.XX"
+                        // Simple check: if line contains "PHP" and has multiple spaces
+                        if (line.contains("PHP") && line.split("\\s+").length >= 4) {
+                            // Try to extract quantity (should be the second "word" after item name)
+                            String[] parts = line.split("\\s+");
+                            if (parts.length >= 2) {
+                                try {
+                                    int qty = Integer.parseInt(parts[1]);
+                                    if (qty > 0) {
+                                        itemsCount++;
+                                        System.out.println("Found item: " + line + " | Quantity: " + qty);
+                                    }
+                                } catch (NumberFormatException e) {
+                                    // Not a valid quantity, but might still be an item row
+                                    // Some items might have spaces in their names
+                                    // Look for a number somewhere in the line
+                                    for (int i = 1; i < parts.length; i++) {
+                                        try {
+                                            int qty = Integer.parseInt(parts[i]);
+                                            if (qty > 0) {
+                                                itemsCount++;
+                                                System.out.println("Found item (alt): " + line + " | Quantity: " + qty);
+                                                break;
+                                            }
+                                        } catch (NumberFormatException ex) {
+                                            continue;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Find total amount - FIXED: Handle different formats
+                if (line.contains("TOTAL AMOUNT DUE:")) {
+                    String amountStr = line.replace("TOTAL AMOUNT DUE:", "")
+                                          .replace("PHP", "")
+                                          .replace(",", "")
+                                          .trim();
                     try {
-                        data.totalAmount = Double.parseDouble(amountStr);
+                        totalAmount = Double.parseDouble(amountStr);
+                        data.totalAmount = totalAmount;
                     } catch (NumberFormatException e) {
-                        data.totalAmount = 0.0;
+                        // Try alternative parsing
+                        String[] parts = line.split("\\s+");
+                        for (String part : parts) {
+                            if (part.matches("\\d+\\.?\\d*")) {
+                                try {
+                                    totalAmount = Double.parseDouble(part);
+                                    data.totalAmount = totalAmount;
+                                    break;
+                                } catch (NumberFormatException ex) {
+                                    continue;
+                                }
+                            }
+                        }
                     }
                 }
             }
-            
+
+            // If we didn't find items with the above logic, use a simpler count
+            if (itemsCount == 0) {
+                itemsCount = countItemsSimple(file);
+            }
+
+            // If no date found, use file date
+            if (data.date == null || data.date.isEmpty()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
+                data.date = sdf.format(new Date(file.lastModified()));
+            }
+
+            // If no invoice ID found, use filename
+            if (data.purchaseId.isEmpty()) {
+                String fileName = file.getName();
+                if (fileName.toLowerCase().endsWith(".txt")) {
+                    data.purchaseId = fileName.substring(0, fileName.length() - 4);
+                } else {
+                    data.purchaseId = fileName;
+                }
+            }
+
+            // Clean up customer name (remove any trailing commas)
+            if (data.customerName.endsWith(",")) {
+                data.customerName = data.customerName.substring(0, data.customerName.length() - 1);
+            }
+
+            // Set items count
             data.itemsCount = itemsCount;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            data.date = sdf.format(new Date(file.lastModified()));
-            
+
+            System.out.println("Parsed invoice: " + data.purchaseId + 
+                             ", Customer: " + data.customerName + 
+                             ", Items: " + data.itemsCount + 
+                             ", Total: " + data.totalAmount);
+
             return data;
+
         } catch (IOException e) {
+            System.err.println("Error reading invoice file: " + file.getName());
             return null;
         }
     }
 
-    /**
-     * Refreshes the purchase list.
-     */
     private void refreshPurchases() {
         loadPurchasesFromFolder();
         JOptionPane.showMessageDialog(this, 
@@ -261,9 +392,42 @@ public class InvoiceScreen extends JPanel {
             JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /**
-     * Views the selected purchase details.
-     */
+    private int countItemsSimple(File file) {
+        int count = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            boolean pastHeader = false;
+            boolean beforeTotal = true;
+            
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                
+                // Look for the header line
+                if (line.contains("DESCRIPTION") && line.contains("QTY")) {
+                    pastHeader = true;
+                    continue;
+                }
+                
+                // Look for the total line to stop counting
+                if (line.contains("TOTAL AMOUNT DUE:")) {
+                    beforeTotal = false;
+                }
+                
+                // Count non-empty lines between header and total
+                if (pastHeader && beforeTotal && !line.isEmpty() && !line.contains("---")) {
+                    // Check if this looks like an item line (has at least 2 columns)
+                    if (line.split("\\s+").length >= 2) {
+                        count++;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error in simple item count for: " + file.getName());
+        }
+        
+        return Math.max(count, 0);
+    }
+
     private void viewSelectedPurchase() {
         int selectedRow = purchaseTable.getSelectedRow();
         if (selectedRow == -1) {
@@ -274,14 +438,25 @@ public class InvoiceScreen extends JPanel {
             return;
         }
         
-        String purchaseId = (String) tableModel.getValueAt(selectedRow, 0);
-        File purchaseFile = new File("invoices", purchaseId + ".txt");
+        int modelRow = purchaseTable.convertRowIndexToModel(selectedRow);
+        String purchaseId = (String) tableModel.getValueAt(modelRow, 0);
         
-        if (!purchaseFile.exists()) {
-            purchaseFile = new File("src/main/invoices", purchaseId + ".txt");
+        File purchaseFile = null;
+        String[] possiblePaths = {
+            "src/main/invoices/" + purchaseId + ".txt",
+            "src/invoices/" + purchaseId + ".txt",
+            "invoices/" + purchaseId + ".txt"
+        };
+        
+        for (String path : possiblePaths) {
+            File testFile = new File(path);
+            if (testFile.exists()) {
+                purchaseFile = testFile;
+                break;
+            }
         }
         
-        if (!purchaseFile.exists()) {
+        if (purchaseFile == null) {
             JOptionPane.showMessageDialog(this, 
                 "Purchase file not found: " + purchaseId + ".txt",
                 "File Not Found", 
@@ -308,25 +483,26 @@ public class InvoiceScreen extends JPanel {
             
             JOptionPane.showMessageDialog(this, 
                 scrollPane,
-                "Purchase: " + purchaseId, 
+                "Purchase Invoice: " + purchaseId, 
                 JOptionPane.PLAIN_MESSAGE);
                 
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, 
-                "Error reading purchase file: " + e.getMessage(),
+                "Error reading purchase file.",
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    /**
-     * Inner class to store purchase data.
-     */
     private static class PurchaseData {
         String purchaseId = "";
         String customerName = "Unknown";
         String date = "";
         double totalAmount = 0.0;
         int itemsCount = 0;
+    }
+    
+    public void refreshData() {
+        resetSearch();
     }
 }

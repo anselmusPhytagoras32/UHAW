@@ -548,62 +548,146 @@ public class UserScreen extends JPanel {
         String contact = contactInput.getText().trim();
         String addr = addressInput.getText().trim();
 
-        // Validate all required fields are filled
-        if (name.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter customer name.", "Missing Name", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (contact.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter contact number.", "Missing Contact", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (addr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter address.", "Missing Address", JOptionPane.WARNING_MESSAGE);
+        // Check if name is empty or set to "unknown" (case insensitive)
+        if (name.isEmpty() || name.equalsIgnoreCase("unknown")) {
+            JOptionPane.showMessageDialog(this, 
+                "Please enter a valid customer name.", 
+                "Invalid Name", 
+                JOptionPane.WARNING_MESSAGE);
+            nameInput.requestFocus();
             return;
         }
 
-        // Validate that at least one item is selected before updating inventory
+        // Check if contact contains only digits and is not empty
+        if (contact.isEmpty() || !contact.matches("\\d+")) {
+            JOptionPane.showMessageDialog(this, 
+                "Please enter a valid contact number (digits only).", 
+                "Invalid Contact", 
+                JOptionPane.WARNING_MESSAGE);
+            contactInput.requestFocus();
+            return;
+        }
+
+        if (addr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Please enter address.", 
+                "Missing Address", 
+                JOptionPane.WARNING_MESSAGE);
+            addressInput.requestFocus();
+            return;
+        }
+
+        // Validate that at least one item is selected
         java.util.List<InvoiceItem> items = new ArrayList<>();
         Map<String, Integer> decrements = new HashMap<>();
         double total = 0;
+        int totalItems = 0;
 
         for (ItemRowData row : itemRows) {
             int qty = (Integer) row.spinner.getValue();
             if (qty > 0) {
                 InventoryItem item = inventory.get(row.itemName);
                 if (item != null) {
+                    // Check if we have enough stock
+                    if (qty > item.quantity) {
+                        JOptionPane.showMessageDialog(this,
+                            "Insufficient stock for: " + item.name + 
+                            "\nAvailable: " + item.quantity + 
+                            "\nRequested: " + qty,
+                            "Insufficient Stock",
+                            JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
                     double itemTotal = qty * item.price;
                     items.add(new InvoiceItem(item.name, qty, item.price, itemTotal));
                     decrements.put(item.name, qty);
                     total += itemTotal;
+                    totalItems += qty;
                 }
             }
         }
 
         if (items.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Select at least one item.", "Empty Cart", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, 
+                "Please select at least one item.", 
+                "Empty Cart", 
+                JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Only update inventory AFTER all validations pass
-        if (updateInventoryFile(decrements)) {
-            writeInvoiceToFile(name, contact, addr, items, total);
-            JOptionPane.showMessageDialog(this, "Invoice Generated!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            nameInput.setText(""); 
-            contactInput.setText(""); 
-            addressInput.setText("");
-            
-            // Clear search after successful checkout
-            resetSearch();
-            refreshTableRows();
+        // Generate invoice ID - ensure it's not blank
+        String timestamp = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
+        String invoiceId = "INV" + timestamp;
 
-            if (MainActivity.getInstance() != null) {
-                MainActivity.getInstance().refreshAllScreens();
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Inventory Error", "Error", JOptionPane.ERROR_MESSAGE);
+        if (invoiceId == null || invoiceId.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                "Error generating invoice ID.",
+                "System Error",
+                JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        System.out.println("Generating invoice with ID: " + invoiceId);
+
+        // Update inventory first
+        if (updateInventoryFile(decrements)) {
+            // Write invoice file
+            boolean invoiceWritten = writeInvoiceToFile(invoiceId, name, contact, addr, items, total);
+
+            if (invoiceWritten) {
+                // Show success message with invoice details
+                String message = String.format(
+                    "Invoice Generated Successfully!\n\n" +
+                    "Invoice ID: %s\n" +
+                    "Customer: %s\n" +
+                    "Total Items: %d\n" +
+                    "Total Amount: PHP %,.2f\n\n" +
+                    "Invoice saved to: invoices/%s.txt",
+                    invoiceId, name, totalItems, total, invoiceId);
+                
+                JOptionPane.showMessageDialog(this, 
+                    message, 
+                    "Success", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                
+                // Reset form
+                nameInput.setText(""); 
+                contactInput.setText(""); 
+                addressInput.setText("");
+                
+                // Reset all spinners to 0
+                for (ItemRowData row : itemRows) {
+                    row.spinner.setValue(0);
+                }
+
+                // Clear search and refresh
+                resetSearch();
+                refreshTableRows();
+
+                // Reload inventory data to reflect changes
+                loadInventoryData();
+
+                if (MainActivity.getInstance() != null) {
+                    MainActivity.getInstance().refreshAllScreens();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Failed to save invoice file.\n" +
+                    "Please check if the 'invoices' directory exists and is writable.", 
+                    "File Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(this, 
+                "Failed to update inventory.\n" +
+                "Invoice generation cancelled.", 
+                "Inventory Error", 
+                JOptionPane.ERROR_MESSAGE);
+            }
     }
+
 
     private boolean updateInventoryFile(Map<String, Integer> decrements) {
         try {
@@ -676,46 +760,110 @@ public class UserScreen extends JPanel {
         }
     }
 
-    private void writeInvoiceToFile(String n, String c, String a, java.util.List<InvoiceItem> items, double t) {
+    private boolean writeInvoiceToFile(String invoiceId, String n, String c, String a, java.util.List<InvoiceItem> items, double t) {
         try {
-            String inv = "INV" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
-            File d = new File("invoices"); 
-            if (!d.exists()) d.mkdir();
-            File f = new File(d, inv + ".txt");
-            
+            // Try multiple possible paths in order
+            String[] possiblePaths = {
+                "src/main/invoices",  // First try the exact path from error
+                "src/invoices",
+                "invoices",
+                "../invoices",
+                "./invoices"
+            };
+
+            File d = null;
+            for (String path : possiblePaths) {
+                File testDir = new File(path);
+                if (testDir.exists() && testDir.isDirectory()) {
+                    d = testDir;
+                    System.out.println("Found invoices directory: " + d.getAbsolutePath());
+                    break;
+                }
+            }
+
+            // Create directory if not found
+            if (d == null) {
+                d = new File("invoices");
+                if (!d.mkdirs()) {
+                    // Try alternative location
+                    d = new File("src/main/invoices");
+                    if (!d.mkdirs()) {
+                        System.err.println("Failed to create invoices directory at any location");
+                        return false;
+                    }
+                }
+                System.out.println("Created invoices directory: " + d.getAbsolutePath());
+            }
+
+            // Create the invoice file
+            File f = new File(d, invoiceId + ".txt");
+            System.out.println("Writing invoice to: " + f.getAbsolutePath());
+
             // Use StringBuilder for efficient string building
             StringBuilder content = new StringBuilder(2000);
-            content.append("=".repeat(80)).append("\n\n  ");
-            content.append(inv).append("\n\n  Date");
-            content.append(" ".repeat(36)).append("Subject\n  ");
-            
             String date = new SimpleDateFormat("dd MMMM yyyy").format(new Date());
-            content.append(date).append(" ".repeat(30 - date.length()));
-            content.append("Service for ").append(date).append("\n\n  Billed to");
-            content.append(" ".repeat(37)).append("Currency\n  ");
-            content.append(n).append(" ".repeat(Math.max(1, 30 - n.length())));
-            content.append("PHP - Philippine Pesos\n  ").append(c).append("\n  ");
-            content.append(a).append("\n\n  ").append("-".repeat(76));
-            content.append("\n\n  DESCRIPTION").append(" ".repeat(30));
-            content.append("QTY").append(" ".repeat(8)).append("UNIT PRICE");
-            content.append(" ".repeat(8)).append("AMOUNT\n\n");
-            
+
+            // Header
+            content.append("=".repeat(80)).append("\n\n");
+            content.append("                           HARDWARE STORE INVOICE\n\n");
+            content.append("=".repeat(80)).append("\n\n");
+
+            // Invoice details
+            content.append("  Invoice Number: ").append(invoiceId).append("\n");
+            content.append("  Date: ").append(date).append("\n\n");
+
+            // Customer information
+            content.append("  BILL TO:\n");
+            content.append("  Name: ").append(n).append("\n");
+            content.append("  Contact No.: ").append(c).append("\n");
+            content.append("  Address: ").append(a).append("\n\n");
+
+            content.append("  ").append("-".repeat(76)).append("\n\n");
+
+            // Table header
+            content.append(String.format("  %-40s %6s %18s %18s%n", 
+                "DESCRIPTION", "QTY", "UNIT PRICE", "AMOUNT"));
+            content.append("\n");
+
+            // Items
             for (InvoiceItem i : items) {
-                String desc = i.description.length() > 35 ? 
-                             i.description.substring(0, 32) + "..." : i.description;
-                content.append(String.format("  %-40s %3d %,15.3f PHP %,15.3f PHP%n", 
-                    desc, i.qty, i.unitPrice, i.amount));
+                String desc = i.description.length() > 38 ? 
+                             i.description.substring(0, 35) + "..." : i.description;
+                content.append(String.format("  %-40s %6d %18s %18s%n", 
+                    desc, 
+                    i.qty, 
+                    String.format("PHP %,.2f", i.unitPrice),
+                    String.format("PHP %,.2f", i.amount)));
             }
-            
-            content.append("\n").append(" ".repeat(55)).append("Amount due");
-            content.append(String.format("%,16.3f PHP", t)).append("\n\n");
-            content.append("=".repeat(80));
-            
+
+            content.append("\n").append("  ").append("-".repeat(76)).append("\n\n");
+
+            // Total
+            content.append(String.format("  %-66s %18s%n", 
+                "TOTAL AMOUNT DUE:", 
+                String.format("PHP %,.2f", t)));
+
+            content.append("\n").append("=".repeat(80)).append("\n");
+            content.append("  Thank you for your business!\n");
+            content.append("\n").append("=".repeat(80));
+
+            // Write to file
             try (PrintWriter w = new PrintWriter(new FileWriter(f))) {
                 w.print(content.toString());
+                w.flush();
             }
+
+            System.out.println("Invoice saved successfully!");
+            System.out.println("Full path: " + f.getAbsolutePath());
+            System.out.println("File exists: " + f.exists());
+            System.out.println("File size: " + f.length() + " bytes");
+
+            return true;
+
         } catch (Exception e) {
             System.err.println("Error writing invoice: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
     }
 
