@@ -31,8 +31,13 @@ public class AdminDashboardScreen extends JPanel {
         setLayout(new BorderLayout());
         setBackground(BG_COLOR);
 
+        // Main container with proper spacing
+        JPanel mainContainer = new JPanel(new BorderLayout());
+        mainContainer.setBackground(BG_COLOR);
+        mainContainer.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
         // 1. Navigation Bar
-        JPanel navBarPanel = new AdminNavBarPanel("Dashboard");
+        AdminNavBarPanel navBarPanel = new AdminNavBarPanel("Dashboard");
 
         // 2. Main Content Wrapper
         JPanel contentPanel = new JPanel();
@@ -60,9 +65,11 @@ public class AdminDashboardScreen extends JPanel {
         contentPanel.add(Box.createVerticalStrut(30));
         contentPanel.add(activityPanel);
 
+        mainContainer.add(navBarPanel, BorderLayout.NORTH);
+        mainContainer.add(contentPanel, BorderLayout.CENTER);
+
         // Add to Main Frame
-        add(navBarPanel, BorderLayout.NORTH);
-        add(contentPanel, BorderLayout.CENTER);
+        add(mainContainer);
 
         // Initial Load
         refreshDashboardStats();
