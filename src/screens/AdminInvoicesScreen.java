@@ -11,6 +11,7 @@ import javax.swing.table.*;
 public class AdminInvoicesScreen extends JPanel {
     private DefaultTableModel tableModel;
     private JTable invoiceTable;
+    private String currentSearchText = "";
 
     /**
      * Constructor that initializes and displays the AdminInvoicesScreen.
@@ -24,10 +25,14 @@ public class AdminInvoicesScreen extends JPanel {
         mainContainer.setBackground(Color.WHITE);
         mainContainer.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Navigation bar
-        JPanel navBarPanel = new AdminNavBarPanel("Invoices");
+        // Navigation bar with search listener
+        AdminNavBarPanel navBarPanel = new AdminNavBarPanel("Invoices");
+        navBarPanel.setSearchListener(text -> {
+            this.currentSearchText = text.toLowerCase().trim();
+            loadInvoicesFromFolder();
+        });
 
-        // Title and action buttons panel
+        // Title panel
         JPanel topPanel = createTopPanel();
 
         // Table panel
@@ -46,7 +51,7 @@ public class AdminInvoicesScreen extends JPanel {
     }
 
     /**
-     * Creates the top panel with title and search functionality.
+     * Creates the top panel with title.
      */
     private JPanel createTopPanel() {
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -56,30 +61,7 @@ public class AdminInvoicesScreen extends JPanel {
         JLabel titleLabel = new JLabel("All Invoices");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
 
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        searchPanel.setOpaque(false);
-
-        JTextField searchField = new JTextField(20);
-        searchField.setFont(new Font("Arial", Font.PLAIN, 14));
-        searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180), 1),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        ));
-
-        JButton searchButton = new JButton("Search");
-        searchButton.setFont(new Font("Arial", Font.BOLD, 14));
-        searchButton.setBackground(new Color(130, 170, 255));
-        searchButton.setForeground(Color.WHITE);
-        searchButton.setFocusPainted(false);
-        searchButton.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
-        searchButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        searchPanel.add(new JLabel("Search:"));
-        searchPanel.add(searchField);
-        searchPanel.add(searchButton);
-
         topPanel.add(titleLabel, BorderLayout.WEST);
-        topPanel.add(searchPanel, BorderLayout.EAST);
 
         return topPanel;
     }
@@ -156,7 +138,7 @@ public class AdminInvoicesScreen extends JPanel {
     }
 
     /**
-     * Loads all invoices from the invoices folder.
+     * Loads all invoices from the invoices folder with search filter.
      */
     private void loadInvoicesFromFolder() {
         tableModel.setRowCount(0);
@@ -181,13 +163,19 @@ public class AdminInvoicesScreen extends JPanel {
             try {
                 InvoiceData data = parseInvoiceFile(file);
                 if (data != null) {
-                    tableModel.addRow(new Object[]{
-                        data.invoiceId,
-                        data.customerName,
-                        data.itemsCount,
-                        data.date,
-                        String.format("PHP %,.2f", data.totalAmount)
-                    });
+                    // Apply search filter
+                    if (currentSearchText.isEmpty() || 
+                        data.invoiceId.toLowerCase().contains(currentSearchText) ||
+                        data.customerName.toLowerCase().contains(currentSearchText)) {
+                        
+                        tableModel.addRow(new Object[]{
+                            data.invoiceId,
+                            data.customerName,
+                            data.itemsCount,
+                            data.date,
+                            String.format("PHP %,.2f", data.totalAmount)
+                        });
+                    }
                 }
             } catch (Exception e) {
                 System.err.println("Error loading invoice: " + file.getName() + " - " + e.getMessage());
