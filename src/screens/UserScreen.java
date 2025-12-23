@@ -6,7 +6,6 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import main.MainActivity;
 
 /**
@@ -417,11 +416,21 @@ public class UserScreen extends JPanel {
         String contact = contactInput.getText().trim();
         String addr = addressInput.getText().trim();
 
-        if (name.isEmpty() || contact.isEmpty() || addr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill all info.", "Missing Info", JOptionPane.WARNING_MESSAGE);
+        // Validate all required fields are filled
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter customer name.", "Missing Name", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (contact.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter contact number.", "Missing Contact", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (addr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter address.", "Missing Address", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
+        // Validate that at least one item is selected before updating inventory
         java.util.List<InvoiceItem> items = new ArrayList<>();
         Map<String, Integer> decrements = new HashMap<>();
         double total = 0;
@@ -442,6 +451,7 @@ public class UserScreen extends JPanel {
             return;
         }
 
+        // Only update inventory AFTER all validations pass
         if (updateInventoryFile(decrements)) {
             writeInvoiceToFile(name, contact, addr, items, total);
             JOptionPane.showMessageDialog(this, "Invoice Generated!", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -459,7 +469,11 @@ public class UserScreen extends JPanel {
         try {
             File f = new File("src/items/inventory.json");
             if (!f.exists()) f = new File("items/inventory.json");
-            if (!f.exists()) return false;
+            if (!f.exists()) f = new File("../items/inventory.json");
+            if (!f.exists()) {
+                System.err.println("Inventory file not found!");
+                return false;
+            }
 
             java.util.List<String> lines = new ArrayList<>();
             try (BufferedReader br = new BufferedReader(new FileReader(f))) {
@@ -467,15 +481,36 @@ public class UserScreen extends JPanel {
             }
 
             for (Map.Entry<String, Integer> e : decrements.entrySet()) {
-                String target = e.getKey(); int sub = e.getValue();
+                String target = e.getKey(); 
+                int sub = e.getValue();
+                boolean found = false;
+                
                 for (int i = 0; i < lines.size(); i++) {
                     if (lines.get(i).contains("\"itemName\": \"" + target + "\"")) {
-                        for (int j = i; j < lines.size(); j++) {
+                        System.out.println("Found item: " + target + " at line " + (i+1));
+                        for (int j = i; j < Math.min(i + 10, lines.size()); j++) {
                             if (lines.get(j).contains("\"quantity\":")) {
                                 String qLine = lines.get(j);
-                                int cur = Integer.parseInt(qLine.split(":")[1].trim().replace(",", ""));
-                                String comma = qLine.trim().endsWith(",") ? "," : "";
-                                lines.set(j, "    \"quantity\": " + Math.max(0, cur - sub) + comma);
+                                System.out.println("Original quantity line: " + qLine);
+                                
+                                // Extract the number more carefully
+                                String[] parts = qLine.split(":");
+                                if (parts.length >= 2) {
+                                    String numPart = parts[1].trim().replaceAll("[^0-9]", "");
+                                    if (numPart.isEmpty()) {
+                                        System.err.println("Could not extract number from: " + qLine);
+                                        return false;
+                                    }
+                                    int cur = Integer.parseInt(numPart);
+                                    System.out.println("Current quantity: " + cur + ", Subtracting: " + sub);
+                                    
+                                    String comma = qLine.trim().endsWith(",") ? "," : "";
+                                    String newLine = "    \"quantity\": " + Math.max(0, cur - sub) + comma;
+                                    System.out.println("New quantity line: " + newLine);
+                                    
+                                    lines.set(j, newLine);
+                                    found = true;
+                                }
                                 break;
                             }
                             if (lines.get(j).contains("}")) break;
@@ -483,10 +518,22 @@ public class UserScreen extends JPanel {
                         break;
                     }
                 }
+                
+                if (!found) {
+                    System.err.println("Item not found in inventory: " + target);
+                    return false;
+                }
             }
-            try (PrintWriter pw = new PrintWriter(new FileWriter(f))) { for (String l : lines) pw.println(l); }
+            
+            try (PrintWriter pw = new PrintWriter(new FileWriter(f))) { 
+                for (String l : lines) pw.println(l); 
+            }
+            System.out.println("Inventory file updated successfully!");
             return true;
-        } catch (Exception ex) { return false; }
+        } catch (Exception ex) { 
+            ex.printStackTrace(); 
+            return false; 
+        }
     }
 
     private void writeInvoiceToFile(String n, String c, String a, java.util.List<InvoiceItem> items, double t) {
