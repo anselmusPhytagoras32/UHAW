@@ -2,9 +2,9 @@ package components;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.event.*;
-import java.util.function.Consumer;
 import main.MainActivity;
 
 public class AdminNavBarPanel extends JPanel {
@@ -59,7 +59,10 @@ public class AdminNavBarPanel extends JPanel {
         searchField.setText(placeholder);
         searchField.setFont(new Font("Arial", Font.PLAIN, 14));
         searchField.setForeground(Color.GRAY);
-        searchField.setBackground(new Color(200, 220, 255));
+        searchField.setBackground(Color.WHITE);
+        searchField.setSelectionColor(new Color(184, 207, 229)); // Light blue selection
+        searchField.setSelectedTextColor(Color.BLACK);
+        searchField.setCaretColor(Color.BLACK);
         searchField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(180, 210, 255), 1),
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)
@@ -98,13 +101,13 @@ public class AdminNavBarPanel extends JPanel {
             }
         });
 
-        searchField.setOpaque(false);
+        searchField.setOpaque(true);
         searchField.setUI(new javax.swing.plaf.basic.BasicTextFieldUI() {
             @Override
             protected void paintBackground(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(searchField.getBackground());
+                g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, searchField.getWidth(), searchField.getHeight(), 20, 20);
                 g2.dispose();
             }

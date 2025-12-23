@@ -1,12 +1,12 @@
 package screens;
 
 import components.AdminNavBarPanel;
-import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import javax.swing.*;
 
 public class AdminDashboardScreen extends JPanel {
 

@@ -2,9 +2,9 @@ package components;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.event.*;
-import java.util.function.Consumer;
 import main.MainActivity;
 
 public class NavBarPanel extends JPanel {
@@ -22,7 +22,13 @@ public class NavBarPanel extends JPanel {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         rightPanel.setOpaque(false);
 
-        JButton mainMenuButton = new NavButton("Main Menu");
+        JButton mainMenuButton = new JButton("Main Menu");
+        mainMenuButton.setFont(new Font("Arial", Font.BOLD, 14));
+        mainMenuButton.setBackground(new Color(220, 220, 220));
+        mainMenuButton.setForeground(Color.BLACK);
+        mainMenuButton.setFocusPainted(false);
+        mainMenuButton.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        mainMenuButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         mainMenuButton.addActionListener(e -> {
             if (MainActivity.getInstance() != null) {
                 MainActivity.getInstance().showScreen(MainActivity.MAIN_MENU_SCREEN);
@@ -31,8 +37,8 @@ public class NavBarPanel extends JPanel {
 
         JTextField searchField = getSearchField();
 
-        rightPanel.add(mainMenuButton);
         rightPanel.add(searchField);
+        rightPanel.add(mainMenuButton);
 
         add(leftPanel, BorderLayout.WEST);
         add(rightPanel, BorderLayout.EAST);
@@ -51,7 +57,10 @@ public class NavBarPanel extends JPanel {
         searchField.setText(placeholder);
         searchField.setFont(new Font("Arial", Font.PLAIN, 14));
         searchField.setForeground(Color.GRAY);
-        searchField.setBackground(new Color(200, 220, 255));
+        searchField.setBackground(Color.WHITE);
+        searchField.setSelectionColor(new Color(184, 207, 229)); // Light blue selection
+        searchField.setSelectedTextColor(Color.BLACK);
+        searchField.setCaretColor(Color.BLACK);
         searchField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(180, 210, 255), 1),
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)
@@ -92,13 +101,13 @@ public class NavBarPanel extends JPanel {
             }
         });
 
-        searchField.setOpaque(false);
+        searchField.setOpaque(true);
         searchField.setUI(new javax.swing.plaf.basic.BasicTextFieldUI() {
             @Override
             protected void paintBackground(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(searchField.getBackground());
+                g2.setColor(Color.WHITE);
                 g2.fillRoundRect(0, 0, searchField.getWidth(), searchField.getHeight(), 20, 20);
                 g2.dispose();
             }
