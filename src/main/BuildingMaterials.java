@@ -23,9 +23,9 @@ public class BuildingMaterials extends Inventory {
         this.material = material;
     }
     
-    public String getSize() {
-        return size;
-    }
+//    public String getSize() {
+//        return size;
+//    }
     
     public void setSize(String size) {
         this.size = size;

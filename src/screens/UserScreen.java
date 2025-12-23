@@ -225,19 +225,47 @@ public class UserScreen extends JPanel {
         JPanel container = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
         container.setOpaque(false);
 
-        JPanel p1 = new JPanel(new BorderLayout(5, 0)); p1.setOpaque(false);
-        JLabel nameLbl = new JLabel("Name:"); nameLbl.setFont(new Font("Arial", Font.BOLD, 14)); nameLbl.setForeground(Color.BLACK);
-        p1.add(nameLbl, BorderLayout.WEST); nameInput = getInputField(); p1.add(nameInput, BorderLayout.CENTER);
+        JPanel p1 = new JPanel(new BorderLayout(5, 0));
+        p1.setOpaque(false);
+        JLabel nameLbl = new JLabel("Name:");
+        nameLbl.setFont(new Font("Arial", Font.BOLD, 14));
+        nameLbl.setForeground(Color.BLACK);
+        p1.add(nameLbl, BorderLayout.WEST);
+        nameInput = getInputField();
+        p1.add(nameInput, BorderLayout.CENTER);
 
-        JPanel p2 = new JPanel(new BorderLayout(5, 0)); p2.setOpaque(false);
-        JLabel contactLbl = new JLabel("Contact No.:"); contactLbl.setFont(new Font("Arial", Font.BOLD, 14)); contactLbl.setForeground(Color.BLACK);
-        p2.add(contactLbl, BorderLayout.WEST); contactInput = getInputField(); p2.add(contactInput, BorderLayout.CENTER);
+        JPanel p2 = new JPanel(new BorderLayout(5, 0));
+        p2.setOpaque(false);
+        JLabel contactLbl = new JLabel("Contact No.:");
+        contactLbl.setFont(new Font("Arial", Font.BOLD, 14));
+        contactLbl.setForeground(Color.BLACK);
+        p2.add(contactLbl, BorderLayout.WEST);
 
-        JPanel p3 = new JPanel(new BorderLayout(5, 0)); p3.setOpaque(false);
-        JLabel addressLbl = new JLabel("Address:"); addressLbl.setFont(new Font("Arial", Font.BOLD, 14)); addressLbl.setForeground(Color.BLACK);
-        p3.add(addressLbl, BorderLayout.WEST); addressInput = getInputField(); p3.add(addressInput, BorderLayout.CENTER);
+        // Create numeric-only contact field
+        contactInput = getInputField();
+        contactInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                char c = evt.getKeyChar();
+                // Allow only digits, backspace, delete, and navigation keys
+                if (!Character.isDigit(c) && c != java.awt.event.KeyEvent.VK_BACK_SPACE) {
+                    evt.consume(); // Ignore this key event
+                }
+            }
+        });
+        p2.add(contactInput, BorderLayout.CENTER);
 
-        container.add(p1); container.add(p2); container.add(p3);
+        JPanel p3 = new JPanel(new BorderLayout(5, 0));
+        p3.setOpaque(false);
+        JLabel addressLbl = new JLabel("Address:");
+        addressLbl.setFont(new Font("Arial", Font.BOLD, 14));
+        addressLbl.setForeground(Color.BLACK);
+        p3.add(addressLbl, BorderLayout.WEST);
+        addressInput = getInputField();
+        p3.add(addressInput, BorderLayout.CENTER);
+
+        container.add(p1);
+        container.add(p2);
+        container.add(p3);
         return container;
     }
 
@@ -658,7 +686,7 @@ public class UserScreen extends JPanel {
             // Use StringBuilder for efficient string building
             StringBuilder content = new StringBuilder(2000);
             content.append("=".repeat(80)).append("\n\n  ");
-            content.append(inv).append("\n\n  Due date");
+            content.append(inv).append("\n\n  Date");
             content.append(" ".repeat(36)).append("Subject\n  ");
             
             String date = new SimpleDateFormat("dd MMMM yyyy").format(new Date());
