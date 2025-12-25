@@ -11,6 +11,8 @@ The system facilitates the transaction process by allowing users (store clerks/c
 - E-Receipt Generation: Generate a structured, digital receipt (e-receipt) that can be saved, displayed, or printed.
 - Data Persistence: The system will store transaction history (though the core inventory remains in the file).
 
+## Running the Program
+To run the program you only need to run the UHAW.jar file 
 
 ## Members:
 - Bañares, Peter Andrew
