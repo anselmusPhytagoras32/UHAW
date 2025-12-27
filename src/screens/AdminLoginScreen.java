@@ -35,7 +35,7 @@ public class AdminLoginScreen extends JPanel {
 
     /**
      * Constructs the AdminLoginScreen with a centered login card.
-     * 
+     * <p>
      * Creates a professional login interface with:
      * - Centered card layout (400x450 pixels)
      * - Title: "Admin Login"
@@ -44,11 +44,11 @@ public class AdminLoginScreen extends JPanel {
      * - Login button with primary blue color
      * - Back to Main Menu button
      * - Error message display area
-     * 
+     * <p>
      * Event Handlers:
      * - Login Button: Validates credentials and navigates to dashboard or shows error
      * - Back Button: Clears form and returns to Main Menu
-     * 
+     * <p>
      * Initial State:
      * - Form fields empty
      * - Error message hidden (single space)

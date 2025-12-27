@@ -8,6 +8,10 @@ import java.util.*;
 import javax.swing.*;
 import main.AppConstants;
 import main.MainActivity;
+import models.ItemRowData;
+import models.InvoiceItem;
+import models.InventoryItem;
+import models.RoundedBorder;
 
 /**
  * UserScreen - The customer purchase creation and checkout interface.
@@ -58,34 +62,6 @@ public class UserScreen extends JPanel {
     // Category constants
     private static final String[] CATEGORY_IDS = {"1", "2", "3"};
     private static final String[] CATEGORY_NAMES = {"Tools", "Building Materials", "Paint & Supplies"};
-    
-    // Inner class to hold inventory data efficiently
-    private static class InventoryItem {
-        final String name;
-        double price;
-        String category;
-        int quantity;
-        
-        InventoryItem(String name, double price, String category, int quantity) {
-            this.name = name;
-            this.price = price;
-            this.category = category;
-            this.quantity = quantity;
-        }
-    }
-    
-    // Inner class to track row components efficiently
-    private static class ItemRowData {
-        final String itemName;
-        final JSpinner spinner;
-        final JLabel totalLabel;
-        
-        ItemRowData(String itemName, JSpinner spinner, JLabel totalLabel) {
-            this.itemName = itemName;
-            this.spinner = spinner;
-            this.totalLabel = totalLabel;
-        }
-    }
 
     /**
      * Constructs the UserScreen and initializes all UI components.
@@ -608,7 +584,7 @@ public class UserScreen extends JPanel {
         JTextField f = new JTextField("", 15);
         f.setFont(AppConstants.FONT_BODY_REGULAR);
         f.setForeground(Color.BLACK);
-        f.setBorder(BorderFactory.createCompoundBorder(new RoundedBorder(15, AppConstants.BORDER_LIGHT_GRAY), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        f.setBorder(BorderFactory.createCompoundBorder(new models.RoundedBorder(15, AppConstants.BORDER_LIGHT_GRAY), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         return f;
     }
 
@@ -618,7 +594,7 @@ public class UserScreen extends JPanel {
         l.setForeground(Color.BLACK);
         l.setBackground(new Color(245, 245, 245));
         l.setOpaque(true);
-        l.setBorder(BorderFactory.createCompoundBorder(new RoundedBorder(12, new Color(180, 180, 180)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+        l.setBorder(BorderFactory.createCompoundBorder(new models.RoundedBorder(12, new Color(180, 180, 180)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         l.setPreferredSize(new Dimension(100, 30));
         return l;
     }
@@ -947,38 +923,4 @@ public class UserScreen extends JPanel {
         }
     }
 
-    private static class InvoiceItem { 
-        String description; 
-        int qty; 
-        double unitPrice, amount; 
-        InvoiceItem(String d, int q, double p, double a){
-            this.description=d;
-            this.qty=q;
-            this.unitPrice=p;
-            this.amount=a;
-        }
-    }
-    
-    static class RoundedBorder extends javax.swing.border.AbstractBorder {
-        int r; 
-        Color c; 
-        RoundedBorder(int r, Color c){
-            this.r=r;
-            this.c=c;
-        }
-        public void paintBorder(Component c, Graphics g, int x, int y, int w, int h){
-            Graphics2D g2=(Graphics2D)g.create(); 
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(this.c); 
-            g2.drawRoundRect(x,y,w-1,h-1,r,r); 
-            g2.dispose();
-        }
-        public Insets getBorderInsets(Component c){
-            return new Insets(2,2,2,2);
-        }
-        public Insets getBorderInsets(Component c, Insets i){
-            i.left=i.right=i.bottom=i.top=2;
-            return i;
-        }
-    }
 }
