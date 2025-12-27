@@ -7,12 +7,53 @@ import javax.swing.*;
 import javax.swing.event.*;
 import main.MainActivity;
 
+/**
+ * NavBarPanel - Navigation bar component for the User-facing screens.
+ * 
+ * This component provides a consistent navigation header for user screens (UserScreen, InvoiceScreen).
+ * It displays the current screen name and provides functionality for searching and navigating back
+ * to the main menu.
+ * 
+ * Features:
+ * - Screen identifier display: Shows which screen the user is currently on
+ * - Search field: For filtering inventory items or invoices by name or date
+ * - Main Menu button: Quick navigation back to the main menu
+ * - Search listener: Notifies the parent screen of search text changes
+ * - Placeholder management: Shows helpful hint text when search field is empty
+ * 
+ * Design:
+ * - Color: Primary blue background (AppConstants.PRIMARY_BLUE)
+ * - Layout: BorderLayout with left panel (title) and right panel (search + menu button)
+ * - Styling: Consistent with the UHAW design system
+ * 
+ * Search Behavior:
+ * - Date-based filtering: Purchase History shows "Search (YYYY-MM-DD)" placeholder
+ * - Text-based filtering: Other screens show generic "Search" placeholder
+ * - Real-time updates: Search listener fires on each keystroke
+ * 
+ * @author UHAW Development Team
+ * @version 1.0
+ */
 public class NavBarPanel extends JPanel {
     private String activeScreen;
     private Consumer<String> searchListener; // Listener for search text
     private JTextField searchField;
     private String placeholderText; // Store the placeholder text
 
+    /**
+     * Constructs a NavBarPanel for a specific screen.
+     * 
+     * Initializes the navigation bar with:
+     * - The screen name displayed on the left
+     * - A search field with context-aware placeholder text
+     * - A Main Menu navigation button
+     * 
+     * The search field placeholder changes based on the screen:
+     * - "Search (YYYY-MM-DD)" for Purchase History screens (date-based filtering)
+     * - "Search" for other screens (text-based filtering)
+     * 
+     * @param activeScreen The name of the current screen (used for display and search context)
+     */
     public NavBarPanel(String activeScreen) {
         this.activeScreen = activeScreen;
         setLayout(new BorderLayout());
@@ -48,6 +89,20 @@ public class NavBarPanel extends JPanel {
 
     /**
      * Sets a listener that triggers whenever the search text changes.
+     * 
+     * The listener is called on every keystroke, allowing the parent screen
+     * to perform real-time filtering or searching. The listener receives the
+     * current search text, excluding the placeholder text.
+     * 
+     * Common Usage:
+     * <pre>
+     * navBarPanel.setSearchListener(searchText -> {
+     *     // Filter inventory or invoices based on searchText
+     *     refreshTableRows();
+     * });
+     * </pre>
+     * 
+     * @param listener A Consumer that accepts the current search text
      */
     public void setSearchListener(Consumer<String> listener) {
         this.searchListener = listener;
@@ -55,6 +110,16 @@ public class NavBarPanel extends JPanel {
 
     /**
      * Resets the search field to its placeholder state.
+     * 
+     * This method is typically called when:
+     * - The user navigates away from and back to the screen
+     * - The parent screen resets its filters and display
+     * - Data is reloaded or refreshed
+     * 
+     * The reset action:
+     * - Clears the search text
+     * - Shows the context-appropriate placeholder text
+     * - Fires the search listener with an empty string to clear filters
      */
     public void resetSearch() {
         if (searchField != null) {
@@ -69,7 +134,13 @@ public class NavBarPanel extends JPanel {
     }
 
     /**
-     * Gets the actual search text (excluding placeholder).
+     * Gets the actual search text (excluding placeholder text).
+     * 
+     * This method distinguishes between:
+     * - Placeholder text: Returns empty string when placeholder is displayed (gray colored text)
+     * - Actual search text: Returns the user-entered text when user is actively searching
+     * 
+     * @return The actual search text, or empty string if no real search text has been entered
      */
     public String getSearchText() {
         if (searchField != null && searchField.getForeground() == Color.GRAY) {

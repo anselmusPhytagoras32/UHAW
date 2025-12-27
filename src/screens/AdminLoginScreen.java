@@ -6,8 +6,57 @@ import javax.swing.*;
 import main.MainActivity;
 import main.AppConstants;
 
+/**
+ * AdminLoginScreen - The authentication gateway for administrative access.
+ * 
+ * This screen provides secure login functionality for administrators to access
+ * the admin dashboard and management tools. It validates credentials against
+ * a CSV file containing authorized admin usernames and passwords.
+ * 
+ * Features:
+ * - Login Form: Username and password input fields
+ * - Authentication: Validates against credentials.csv file
+ * - Error Handling: Displays error messages for invalid credentials
+ * - Back Navigation: Allows users to return to Main Menu
+ * - Professional Design: Centered card-based layout with clear labeling
+ * 
+ * Security Notes:
+ * - Credentials stored in: src/screens/admin/credentials.csv
+ * - CSV Format: username,password (comma-separated)
+ * - Password Masking: Password field hides input characters
+ * - Case-Sensitive: Username and password matching is case-sensitive
+ * 
+ * Navigation:
+ * - Successful Login: Redirects to AdminDashboardScreen
+ * - Back Button: Returns to MainMenuScreen
+ * - Failed Login: Shows error message, allows retry
+ * 
+ * @author UHAW Development Team
+ * @version 1.0
+ */
 public class AdminLoginScreen extends JPanel {
 
+    /**
+     * Constructs the AdminLoginScreen with a centered login card.
+     * 
+     * Creates a professional login interface with:
+     * - Centered card layout (400x450 pixels)
+     * - Title: "Admin Login"
+     * - Username input field
+     * - Password input field (masked)
+     * - Login button with primary blue color
+     * - Back to Main Menu button
+     * - Error message display area
+     * 
+     * Event Handlers:
+     * - Login Button: Validates credentials and navigates to dashboard or shows error
+     * - Back Button: Clears form and returns to Main Menu
+     * 
+     * Initial State:
+     * - Form fields empty
+     * - Error message hidden (single space)
+     * - Focus on username field
+     */
     public AdminLoginScreen() {
         setLayout(new BorderLayout());
         setBackground(AppConstants.BG_LIGHT_GRAY);
@@ -125,10 +174,27 @@ public class AdminLoginScreen extends JPanel {
     }
 
     /**
-     * Authenticates admin credentials from CSV file
-     * @param username The username to check
-     * @param password The password to check
-     * @return true if credentials are valid, false otherwise
+     * Authenticates admin credentials by checking against the CSV file.
+     * 
+     * Credential File:
+     * - Location: src/screens/admin/credentials.csv (in classpath resources)
+     * - Format: Each line contains "username,password"
+     * - Example: "admin,password123"
+     * 
+     * Authentication Process:
+     * 1. Loads credentials.csv from classpath resources
+     * 2. Iterates through each line to find matching credentials
+     * 3. Performs exact string matching (case-sensitive)
+     * 4. Returns true if exact match found, false otherwise
+     * 
+     * Error Handling:
+     * - Returns false if CSV file not found
+     * - Continues checking other credentials if parsing error occurs
+     * - Logs errors to standard error stream for debugging
+     * 
+     * @param username The username entered by the admin
+     * @param password The password entered by the admin
+     * @return true if credentials match an entry in credentials.csv, false otherwise
      */
     private boolean authenticateAdmin(String username, String password) {
         String line;

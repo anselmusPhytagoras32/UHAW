@@ -9,6 +9,37 @@ import java.util.Date;
 import javax.swing.*;
 import main.AppConstants;
 
+/**
+ * AdminDashboardScreen - The main administrative overview and analytics screen.
+ * 
+ * This screen provides admins with a high-level overview of the system's key metrics
+ * and recent activity. It serves as the landing page after admin login and displays
+ * real-time data about the business operations.
+ * 
+ * Key Features:
+ * - Statistics Cards: Displays total invoices, inventory items, and total revenue
+ * - Activity Feed: Shows recent invoice generation and system activities
+ * - Auto-Refresh: Updates statistics every 5 seconds for real-time monitoring
+ * - Professional Dashboard Layout: Clean, card-based design with visual hierarchy
+ * 
+ * Displayed Metrics:
+ * - Total Invoices: Count of all generated invoices
+ * - Inventory Items: Current count of items in stock
+ * - Total Revenue: Sum of all invoice amounts in PHP currency
+ * - Recent Activity: Latest 5 invoices with timestamps
+ * 
+ * Data Sources:
+ * - Invoices: Loaded from text files in the invoices directory
+ * - Activity: Extracted from file modification dates and invoice content
+ * - Updates: Automatic refresh every 5 seconds via Timer
+ * 
+ * Navigation:
+ * - Search feature disabled (not applicable for dashboard)
+ * - Uses AdminNavBarPanel with showSearchBar = false
+ * 
+ * @author UHAW Development Team
+ * @version 1.0
+ */
 public class AdminDashboardScreen extends JPanel {
 
     // Dynamic Components
@@ -17,6 +48,22 @@ public class AdminDashboardScreen extends JPanel {
     private JPanel activityListPanel; // Panel to hold the list rows
     private Timer refreshTimer;
 
+    /**
+     * Constructs the AdminDashboardScreen with statistics and activity display.
+     * 
+     * Initialization:
+     * 1. Creates the main layout with navigation bar
+     * 2. Creates statistics cards for key metrics
+     * 3. Creates activity feed panel for recent invoices
+     * 4. Loads initial data
+     * 5. Starts auto-refresh timer (updates every 5 seconds)
+     * 
+     * Auto-Refresh:
+     * - Triggered via a Timer that fires every 5000 milliseconds
+     * - Calls refreshDashboardStats() for metric updates
+     * - Calls refreshActivityList() for activity feed updates
+     * - Ensures real-time data display without user intervention
+     */
     public AdminDashboardScreen() {
         setLayout(new BorderLayout());
         setBackground(AppConstants.BG_LIGHT_GRAY);
@@ -70,6 +117,22 @@ public class AdminDashboardScreen extends JPanel {
     }
 
     //UI stuffs
+    /**
+     * Creates the statistics panel with three metric cards.
+     * 
+     * Displays three key performance indicators in a grid layout:
+     * 1. Total Invoices: Number of invoices generated
+     * 2. Inventory Items: Count of items in stock
+     * 3. Total Revenue: Sum of all invoice amounts
+     * 
+     * Each metric is displayed in a modern card with:
+     * - Title in uppercase
+     * - Large numeric value
+     * - Descriptive subtitle
+     * - Colored accent bar (blue, green, orange)
+     * 
+     * @return A configured JPanel containing the three metric cards
+     */
     private JPanel createStatsPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 3, 20, 0));
         panel.setBackground(AppConstants.BG_LIGHT_GRAY);
@@ -85,6 +148,22 @@ public class AdminDashboardScreen extends JPanel {
         return panel;
     }
 
+    /**
+     * Creates an individual metric card for the statistics panel.
+     * 
+     * Each card features:
+     * - Colored left border (accent color) for visual distinction
+     * - Title in uppercase gray text
+     * - Large value display (numeric or currency formatted)
+     * - Subtitle describing the metric
+     * - White background with padding
+     * 
+     * @param title The title of the metric (e.g., "Total Invoices")
+     * @param valueLabel The JLabel displaying the metric value (updated dynamically)
+     * @param subtext The descriptive subtitle
+     * @param accentColor The color for the left border accent
+     * @return A styled JPanel representing one metric card
+     */
     private JPanel createModernCard(String title, JLabel valueLabel, String subtext, Color accentColor) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(AppConstants.BG_WHITE);
@@ -115,6 +194,23 @@ public class AdminDashboardScreen extends JPanel {
         return card;
     }
 
+    /**
+     * Creates the activity feed panel showing recent invoices and system activity.
+     * 
+     * This panel displays:
+     * - Header: "Recent Activity" title
+     * - Card container: White background with border
+     * - Scrollable list: Top 5 recent invoices with timestamps
+     * - Empty state: Shows "No recent activities logged" if no invoices exist
+     * 
+     * Layout:
+     * - Header at top
+     * - Scrollable area below with activity rows
+     * - Each row shows invoice ID and timestamp
+     * - Rows separated by subtle dividers
+     * 
+     * @return A configured JPanel containing the activity feed
+     */
     private JPanel createActivityContainer() {
         JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.setOpaque(false);
@@ -148,6 +244,19 @@ public class AdminDashboardScreen extends JPanel {
         return wrapper;
     }
 
+    /**
+     * Creates an individual activity row for the activity feed.
+     * 
+     * Each row displays:
+     * - Activity description on the left (e.g., "Invoice Generated: INV-001")
+     * - Timestamp on the right (formatted as "MMM dd, HH:mm")
+     * - Optional separator line (unless it's the last item)
+     * 
+     * @param text The activity description text
+     * @param date The timestamp of the activity
+     * @param isLast Boolean indicating if this is the last item (affects divider display)
+     * @return A styled JPanel representing one activity row
+     */
     private JPanel createActivityRow(String text, String date, boolean isLast) {
         JPanel row = new JPanel(new BorderLayout());
         row.setBackground(Color.WHITE);

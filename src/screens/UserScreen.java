@@ -10,7 +10,35 @@ import main.MainActivity;
 import main.AppConstants;
 
 /**
- * UserScreen class with Search enabled and Top-Bar Layout.
+ * UserScreen - The customer purchase creation and checkout interface.
+ * 
+ * This is the primary screen for end-users to browse inventory, add items to cart,
+ * and generate purchase invoices. It provides a complete shopping experience with:
+ * 
+ * Key Features:
+ * - Inventory Display: Shows available items with prices and stock levels
+ * - Category Filtering: Users can filter items by Tools, Building Materials, Paint & Supplies
+ * - Search Functionality: Real-time search by item name
+ * - Shopping Cart: Quantity selector for each item with automatic total calculation
+ * - Customer Information: Form to capture customer name, contact, and address
+ * - Invoice Generation: Creates purchase invoices saved as text files
+ * 
+ * Layout Sections:
+ * - Navigation Bar: Search field and Main Menu button
+ * - Title: "Create Purchase" header
+ * - Customer Info Panel: Input fields for customer details
+ * - Category Toggle Panel: Filter buttons for inventory categories
+ * - Inventory Table: Displays items with quantity spinners and totals
+ * - Bottom Panel: Cart summary and action buttons (Checkout, Clear Cart)
+ * 
+ * Data Management:
+ * - Loads inventory from JSON file (src/items/inventory.json)
+ * - Maintains selected categories and search text state
+ * - Tracks shopping cart items and quantities
+ * - Auto-calculates totals for display
+ * 
+ * @author UHAW Development Team
+ * @version 1.0
  */
 public class UserScreen extends JPanel {
 
@@ -62,6 +90,17 @@ public class UserScreen extends JPanel {
         }
     }
 
+    /**
+     * Constructs the UserScreen and initializes all UI components.
+     * 
+     * Initialization Steps:
+     * 1. Creates data structures for inventory and selected categories
+     * 2. Loads inventory data from JSON file
+     * 3. Creates all UI panels (navigation, customer info, inventory table, etc.)
+     * 4. Sets up search listener for real-time filtering
+     * 5. Selects all categories by default
+     * 6. Displays items in the inventory table
+     */
     public UserScreen() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
@@ -127,6 +166,20 @@ public class UserScreen extends JPanel {
         add(mainContainer);
     }
 
+    /**
+     * Refreshes the screen data and state.
+     * 
+     * This method is called when:
+     * - User navigates back to this screen
+     * - Inventory is updated by admin
+     * - Global refresh is triggered
+     * 
+     * Actions:
+     * - Reloads inventory from JSON file
+     * - Clears search filters
+     * - Refreshes table display
+     * - Resets any UI state
+     */
     public void refreshData() {
         loadInventoryData();
         resetSearch(); // Clear search when refreshing
@@ -134,6 +187,13 @@ public class UserScreen extends JPanel {
     }
 
     // NEW METHOD: Reset search when screen is shown again
+    /**
+     * Resets search to its initial state.
+     * 
+     * This method clears the search text from the search field and resets
+     * the internal search state variable, allowing the user to see all items
+     * when returning to the screen.
+     */
     public void resetSearch() {
         currentSearchText = "";
         if (navBarPanel != null) {

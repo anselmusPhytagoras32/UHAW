@@ -9,6 +9,39 @@ import javax.swing.table.*;
 import main.MainActivity;
 import main.AppConstants;
 
+/**
+ * AdminInventoryScreen - The inventory management interface for administrators.
+ * 
+ * This screen allows admins to manage the system's inventory of products. Administrators can:
+ * - View all inventory items in a table format
+ * - Add new items to inventory
+ * - Edit existing item details
+ * - Delete items from inventory
+ * - Search for specific items
+ * 
+ * Features:
+ * - Inventory Table: Displays item name, description, price, category, and quantity
+ * - Item Management: Add, Edit, Delete buttons for inventory CRUD operations
+ * - Search Functionality: Real-time search to filter items by name
+ * - Stock Status: Visual indicators for out-of-stock items (displayed in red)
+ * - Category Support: Three categories (Tools, Building Materials, Paint & Supplies)
+ * - Data Persistence: Saves inventory to JSON file (src/items/inventory.json)
+ * 
+ * Data Management:
+ * - Loads inventory from JSON file on initialization
+ * - Stores inventory in a List<InventoryItem>
+ * - Saves changes back to JSON file after modifications
+ * - Auto-refreshes all screens when inventory is updated
+ * 
+ * User Interactions:
+ * - Add Item: Opens dialog to create new inventory entry
+ * - Edit Item: Opens dialog to modify selected item details
+ * - Delete Item: Removes selected item with confirmation
+ * - Search: Filters table in real-time as user types
+ * 
+ * @author UHAW Development Team
+ * @version 1.0
+ */
 public class AdminInventoryScreen extends JPanel {
     private DefaultTableModel tableModel;
     private JTable inventoryTable;

@@ -7,8 +7,40 @@ import javax.swing.*;
 import main.MainActivity;
 import main.AppConstants;
 
+/**
+ * MainMenuScreen - The initial landing page for the UHAW application.
+ * 
+ * This screen serves as the entry point to the application, presenting users with a welcoming
+ * interface and navigation options to the main system components. It is divided into two sections:
+ * a left info panel explaining the system, and a right navigation panel with action buttons.
+ * 
+ * Features:
+ * - Split-panel layout: Left side displays system information and branding
+ * - Navigation Buttons: User Panel, Admin Panel, About, and Exit options
+ * - Hover Effects: Interactive buttons with visual feedback on mouse over
+ * - Professional Design: Uses brand colors and consistent typography
+ * 
+ * Navigation Options:
+ * - User Panel: Access to customer purchase creation and history
+ * - Admin Panel: Access to admin login screen for inventory and invoice management
+ * - About: Display team information and system details
+ * - Exit: Gracefully close the application
+ * 
+ * @author UHAW Development Team
+ * @version 1.0
+ */
 public class MainMenuScreen extends JPanel {
 
+    /**
+     * Constructs the MainMenuScreen with a split-panel layout.
+     * 
+     * Layout Structure:
+     * - Left Panel (50%): System branding, title, subtitle, and description
+     * - Right Panel (50%): Navigation menu with styled buttons
+     * 
+     * The constructor initializes all UI components, sets up styling using AppConstants,
+     * and configures button click listeners for navigation.
+     */
     public MainMenuScreen() {
         setLayout(new GridLayout(1, 2)); // Split 50/50
 
@@ -96,7 +128,18 @@ public class MainMenuScreen extends JPanel {
     }
 
     /**
-     * Helper to create styled, wrapped text areas that look like labels.
+     * Helper method to create styled text areas that function as non-editable labels.
+     * 
+     * This method creates text areas with word wrapping enabled, suitable for displaying
+     * multi-line text content. The text areas are:
+     * - Non-editable and non-focusable
+     * - Transparent background to blend with parent panels
+     * - Set to left alignment for consistent text layout
+     * - Fully configurable with custom fonts and colors
+     * 
+     * @param text The text content to display
+     * @param font The font to apply to the text
+     * @return A configured JTextArea with the specified text and font styling
      */
     private JTextArea createTextComponent(String text, Font font) {
         JTextArea textArea = new JTextArea(text);
@@ -112,7 +155,25 @@ public class MainMenuScreen extends JPanel {
     }
 
     /**
-     * Creates a sophisticated menu button with hover effects.
+     * Creates a sophisticated menu button with dynamic hover effects.
+     * 
+     * This method constructs a styled button with:
+     * - Title and subtitle labels for hierarchical information
+     * - Arrow icon that changes color on hover
+     * - Smooth hover effects with background and border color transitions
+     * - Hand cursor to indicate interactivity
+     * - Click action that executes the provided Runnable
+     * 
+     * Button Design:
+     * - Dimensions: 300x70 pixels
+     * - Normal state: White background with light gray border
+     * - Hover state: Light blue background with primary blue border
+     * - Layout: BorderLayout with title/subtitle on left and arrow on right
+     * 
+     * @param title The main button title (displayed in bold)
+     * @param subtitle The secondary description text (displayed in gray)
+     * @param action The Runnable to execute when the button is clicked
+     * @return A configured JButton with hover effects and action listener
      */
     private JButton createStyledMenuButton(String title, String subtitle, Runnable action) {
         JButton button = new JButton();
@@ -170,7 +231,21 @@ public class MainMenuScreen extends JPanel {
     }
 
     /**
-     * Shows the About Dialog with Member names.
+     * Displays an informational dialog box about the UHAW system.
+     * 
+     * This dialog presents:
+     * - System name and branding
+     * - List of developer team members
+     * - Course and university information
+     * 
+     * The dialog is formatted as HTML for better visual presentation,
+     * making it easy to read the team information and project context.
+     * 
+     * Team members displayed:
+     * - Bañares, Peter Andrew
+     * - Margarata, Sean Eric
+     * - Muñoz, Carl Johannes
+     * - Santos, Gebhel Anselm
      */
     private void showAboutDialog() {
         String message = "<html><body style='width: 250px;'>" +
