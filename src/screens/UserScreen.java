@@ -8,9 +8,9 @@ import java.util.*;
 import javax.swing.*;
 import main.AppConstants;
 import main.MainActivity;
-import models.ItemRowData;
-import models.InvoiceItem;
 import models.InventoryItem;
+import models.InvoiceItem;
+import models.ItemRowData;
 import models.RoundedBorder;
 
 /**
@@ -584,7 +584,7 @@ public class UserScreen extends JPanel {
         JTextField f = new JTextField("", 15);
         f.setFont(AppConstants.FONT_BODY_REGULAR);
         f.setForeground(Color.BLACK);
-        f.setBorder(BorderFactory.createCompoundBorder(new models.RoundedBorder(15, AppConstants.BORDER_LIGHT_GRAY), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        f.setBorder(BorderFactory.createCompoundBorder(new RoundedBorder(15, AppConstants.BORDER_LIGHT_GRAY), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         return f;
     }
 
@@ -594,7 +594,7 @@ public class UserScreen extends JPanel {
         l.setForeground(Color.BLACK);
         l.setBackground(new Color(245, 245, 245));
         l.setOpaque(true);
-        l.setBorder(BorderFactory.createCompoundBorder(new models.RoundedBorder(12, new Color(180, 180, 180)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+        l.setBorder(BorderFactory.createCompoundBorder(new RoundedBorder(12, new Color(180, 180, 180)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         l.setPreferredSize(new Dimension(100, 30));
         return l;
     }
@@ -922,5 +922,4 @@ public class UserScreen extends JPanel {
             return false;
         }
     }
-
 }
