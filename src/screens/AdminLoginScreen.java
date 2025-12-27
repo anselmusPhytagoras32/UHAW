@@ -130,7 +130,7 @@ public class AdminLoginScreen extends JPanel {
      * @return true if credentials are valid, false otherwise
      */
     private boolean authenticateAdmin(String username, String password) {
-        String csvFile = "../screens/admin/credentials.csv";
+        String csvFile = "C:/Users/Calexx/IdeaProjects/UHAW/src/screens/admin/credentials.csv";
         String line;
         String csvSplitBy = ",";
 
