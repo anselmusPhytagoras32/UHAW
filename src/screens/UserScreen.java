@@ -811,7 +811,8 @@ public class UserScreen extends JPanel {
     private void showItemDetails(InventoryItem item) {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Item Details", true);
         dialog.setLayout(new BorderLayout(10, 10));
-        dialog.setSize(550, 500);
+        dialog.setSize(550, 450);
+        dialog.setResizable(false);
         dialog.setLocationRelativeTo(this);
 
         JPanel contentPanel = new JPanel();
@@ -868,17 +869,6 @@ public class UserScreen extends JPanel {
         }
 
         contentPanel.add(specificPanel);
-        contentPanel.add(Box.createVerticalStrut(20));
-
-        // Close button
-        JButton closeButton = new JButton("Close");
-        closeButton.setFont(AppConstants.FONT_LABEL_BOLD);
-        closeButton.setBackground(AppConstants.PRIMARY_BLUE);
-        closeButton.setForeground(Color.WHITE);
-        closeButton.setFocusPainted(false);
-        closeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        closeButton.addActionListener(e -> dialog.dispose());
-        contentPanel.add(closeButton);
 
         dialog.add(contentPanel, BorderLayout.CENTER);
         dialog.setVisible(true);
