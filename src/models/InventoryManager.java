@@ -83,11 +83,17 @@ public class InventoryManager {
                     String category = extractJsonValue(item, "category");
                     String quantityStr = extractJsonValue(item, "quantity");
                     String description = extractJsonValue(item, "description");
+                    String color = extractJsonValue(item, "color");
+                    String powerSource = extractJsonValue(item, "powerSource");
+                    String material = extractJsonValue(item, "material");
 
                     if (itemName != null && valueStr != null) {
                         double value = Double.parseDouble(valueStr.replaceAll(",", "").trim());
                         int quantity = (quantityStr != null) ? Integer.parseInt(quantityStr.trim()) : 0;
-                        InventoryItem newItem = new InventoryItem(itemName, value, category, quantity);
+                        
+                        // Create appropriate subclass based on category using polymorphism
+                        InventoryItem newItem = createItemByCategory(category, itemName, value, quantity, color, powerSource, material);
+                        
                         if (description != null) {
                             newItem.description = description;
                         }
@@ -136,12 +142,43 @@ public class InventoryManager {
         }
     }
 
+    // Factory method to create appropriate subclass based on category
+    // Demonstrates polymorphism - returns specific subclass as InventoryItem
+    private InventoryItem createItemByCategory(String category, String name, double price, int quantity, String color, String powerSource, String material) {
+        if (category == null) {
+            category = "1"; // Default to Tools if category is missing
+        }
+        
+        switch (category) {
+            case "1":
+                Tools toolItem = new Tools(name, price, quantity);
+                if (powerSource != null && !powerSource.isEmpty()) {
+                    toolItem.setPowerSource(powerSource);
+                }
+                return toolItem;
+            case "2":
+                BuildingMaterials buildingItem = new BuildingMaterials(name, price, quantity);
+                if (material != null && !material.isEmpty()) {
+                    buildingItem.setMaterial(material);
+                }
+                return buildingItem;
+            case "3":
+                PaintAndSupplies paintItem = new PaintAndSupplies(name, price, quantity);
+                if (color != null && !color.isEmpty()) {
+                    paintItem.setColor(color);
+                }
+                return paintItem;
+            default:
+                return new Tools(name, price, quantity); // Default to Tools
+        }
+    }
+
     // Loads sample/default inventory data for testing
     private void loadSampleData() {
         inventoryItems.clear();
-        inventoryItems.add(new InventoryItem("Product A", 150.00, "1", 10));
-        inventoryItems.add(new InventoryItem("Product B", 250.00, "2", 5));
-        inventoryItems.add(new InventoryItem("Product C", 75.00, "3", 15));
+        inventoryItems.add(new Tools("Product A", 150.00, 10));
+        inventoryItems.add(new BuildingMaterials("Product B", 250.00, 5));
+        inventoryItems.add(new PaintAndSupplies("Product C", 75.00, 15));
     }
 
     // Returns all inventory items as a list

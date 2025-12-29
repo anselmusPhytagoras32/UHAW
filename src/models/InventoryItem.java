@@ -1,8 +1,9 @@
 package models;
 
-// Represents a product in the inventory system
+// Abstract base class representing a product in the inventory system
 // Encapsulates product information including name, price, category, and quantity
-public class InventoryItem {
+// Subclasses define specific product categories
+public abstract class InventoryItem {
     private String name;
     private double price;
     private String category;

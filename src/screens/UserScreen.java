@@ -13,6 +13,9 @@ import models.InventoryManager;
 import models.InvoiceItem;
 import models.ItemRowData;
 import models.RoundedBorder;
+import models.Tools;
+import models.BuildingMaterials;
+import models.PaintAndSupplies;
 
 // The customer purchase creation and checkout interface
 // Primary screen for end-users to browse inventory, add items to cart, and generate purchase invoices
@@ -33,6 +36,7 @@ public class UserScreen extends JPanel {
     // Stores current search text
     private String currentSearchText = "";
     private NavBarPanel navBarPanel;
+    private InventoryItem selectedItem = null;
     
     // Category constants
     private static final String[] CATEGORY_IDS = {"1", "2", "3"};
@@ -323,6 +327,21 @@ public class UserScreen extends JPanel {
 
         JLabel nameLbl = getStyledLabel(item.getName()); 
         nameLbl.setHorizontalAlignment(SwingConstants.LEFT);
+        // Make name clickable with hover effect
+        nameLbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        nameLbl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                selectedItem = item;
+                showItemDetails(item);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                nameLbl.setBackground(new Color(220, 220, 220));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                nameLbl.setBackground(new Color(245, 245, 245));
+            }
+        });
+        
         JLabel totalLbl = getStyledLabel("0.00");
         JLabel valLbl = getStyledLabel(String.format("%.2f", item.getPrice()));
 
@@ -786,5 +805,153 @@ public class UserScreen extends JPanel {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // Display item details with subclass-specific fields
+    private void showItemDetails(InventoryItem item) {
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Item Details", true);
+        dialog.setLayout(new BorderLayout(10, 10));
+        dialog.setSize(550, 500);
+        dialog.setLocationRelativeTo(this);
+
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        contentPanel.setBackground(Color.WHITE);
+
+        // Title
+        JLabel titleLabel = new JLabel("<html><div style='width:480px;'>" + item.getName() + "</div></html>");
+        titleLabel.setFont(AppConstants.FONT_TITLE_LARGE_REGULAR);
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        contentPanel.add(titleLabel);
+        contentPanel.add(Box.createVerticalStrut(15));
+
+        // Common fields
+        addDetailField(contentPanel, "Category:", getCategoryName(item));
+        addDetailField(contentPanel, "Price:", String.format("PHP %.2f", item.getPrice()));
+        addDetailField(contentPanel, "Available Stock:", String.valueOf(item.getQuantity()));
+        
+        if (item.description != null && !item.description.isEmpty()) {
+            addDetailFieldMultiline(contentPanel, "Description:", item.description, 480);
+        }
+
+        contentPanel.add(Box.createVerticalStrut(10));
+
+        // Subclass-specific fields
+        JPanel specificPanel = new JPanel();
+        specificPanel.setLayout(new BoxLayout(specificPanel, BoxLayout.Y_AXIS));
+        specificPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        specificPanel.setBackground(new Color(240, 248, 255));
+        specificPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(AppConstants.PRIMARY_BLUE, 2),
+            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
+
+        JLabel specificLabel = new JLabel("Special Features:");
+        specificLabel.setFont(AppConstants.FONT_LABEL_BOLD);
+        specificLabel.setForeground(AppConstants.PRIMARY_BLUE);
+        specificPanel.add(specificLabel);
+        specificPanel.add(Box.createVerticalStrut(8));
+
+        if (item instanceof PaintAndSupplies) {
+            PaintAndSupplies paint = (PaintAndSupplies) item;
+            addDetailFieldToPanel(specificPanel, "Color:", paint.getColor());
+            addDetailFieldToPanel(specificPanel, "Type:", "Paint Product");
+        } else if (item instanceof Tools) {
+            Tools tool = (Tools) item;
+            addDetailFieldToPanel(specificPanel, "Power Source:", tool.getPowerSource());
+            addDetailFieldToPanel(specificPanel, "Type:", "Tool Equipment");
+        } else if (item instanceof BuildingMaterials) {
+            BuildingMaterials building = (BuildingMaterials) item;
+            addDetailFieldToPanel(specificPanel, "Material:", building.getMaterial());
+            addDetailFieldToPanel(specificPanel, "Type:", "Building Material");
+        }
+
+        contentPanel.add(specificPanel);
+        contentPanel.add(Box.createVerticalStrut(20));
+
+        // Close button
+        JButton closeButton = new JButton("Close");
+        closeButton.setFont(AppConstants.FONT_LABEL_BOLD);
+        closeButton.setBackground(AppConstants.PRIMARY_BLUE);
+        closeButton.setForeground(Color.WHITE);
+        closeButton.setFocusPainted(false);
+        closeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        closeButton.addActionListener(e -> dialog.dispose());
+        contentPanel.add(closeButton);
+
+        dialog.add(contentPanel, BorderLayout.CENTER);
+        dialog.setVisible(true);
+    }
+
+    private void addDetailField(JPanel panel, String label, String value) {
+        JPanel fieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
+        fieldPanel.setOpaque(false);
+        fieldPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        fieldPanel.setMaximumSize(new Dimension(500, 40));
+
+        JLabel lblLabel = new JLabel(label);
+        lblLabel.setFont(AppConstants.FONT_LABEL_BOLD);
+        lblLabel.setForeground(Color.BLACK);
+        
+        JLabel lblValue = new JLabel(value);
+        lblValue.setFont(AppConstants.FONT_BODY_REGULAR);
+        lblValue.setForeground(Color.DARK_GRAY);
+
+        fieldPanel.add(lblLabel);
+        fieldPanel.add(lblValue);
+        panel.add(fieldPanel);
+    }
+
+    private void addDetailFieldMultiline(JPanel panel, String label, String value, int width) {
+        JPanel fieldPanel = new JPanel();
+        fieldPanel.setLayout(new BoxLayout(fieldPanel, BoxLayout.Y_AXIS));
+        fieldPanel.setOpaque(false);
+        fieldPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        fieldPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+
+        JLabel lblLabel = new JLabel(label);
+        lblLabel.setFont(AppConstants.FONT_LABEL_BOLD);
+        lblLabel.setForeground(Color.BLACK);
+        lblLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        JLabel lblValue = new JLabel("<html><div style='width:" + width + "px;'>"+value+"</div></html>");
+        lblValue.setFont(AppConstants.FONT_BODY_REGULAR);
+        lblValue.setForeground(Color.DARK_GRAY);
+        lblValue.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        fieldPanel.add(lblLabel);
+        fieldPanel.add(Box.createVerticalStrut(3));
+        fieldPanel.add(lblValue);
+        panel.add(fieldPanel);
+    }
+
+    private void addDetailFieldToPanel(JPanel panel, String label, String value) {
+        JPanel fieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
+        fieldPanel.setOpaque(false);
+        fieldPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        fieldPanel.setMaximumSize(new Dimension(480, 40));
+
+        JLabel lblLabel = new JLabel(label);
+        lblLabel.setFont(AppConstants.FONT_LABEL_BOLD);
+        lblLabel.setForeground(AppConstants.DARK_PRIMARY_BLUE);
+        
+        JLabel lblValue = new JLabel("<html><div style='width:350px;'>"+value+"</div></html>");
+        lblValue.setFont(AppConstants.FONT_BODY_REGULAR);
+        lblValue.setForeground(Color.BLACK);
+
+        fieldPanel.add(lblLabel);
+        fieldPanel.add(lblValue);
+        panel.add(fieldPanel);
+    }
+
+    private String getCategoryName(InventoryItem item) {
+        String category = item.getCategory();
+        for (int i = 0; i < CATEGORY_IDS.length; i++) {
+            if (CATEGORY_IDS[i].equals(category)) {
+                return CATEGORY_NAMES[i];
+            }
+        }
+        return "Unknown";
     }
 }

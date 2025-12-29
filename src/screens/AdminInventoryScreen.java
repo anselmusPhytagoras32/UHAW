@@ -8,6 +8,9 @@ import main.AppConstants;
 import main.MainActivity;
 import models.InventoryItem;
 import models.InventoryManager;
+import models.Tools;
+import models.BuildingMaterials;
+import models.PaintAndSupplies;
 
 // The inventory management interface for administrators
 // Allows admins to view, add, edit, and delete inventory items with search functionality
@@ -194,6 +197,7 @@ public class AdminInventoryScreen extends JPanel {
     
     // Converts category ID to human-readable name
     private String getCategoryName(String categoryId) {
+        
         if (categoryId == null) return "Unknown";
         for (int i = 0; i < CATEGORY_IDS.length; i++) {
             if (CATEGORY_IDS[i].equals(categoryId)) {
@@ -244,7 +248,8 @@ public class AdminInventoryScreen extends JPanel {
                     return;
                 }
 
-                InventoryItem newItem = new InventoryItem(name, value, category, qty);
+                // Create appropriate subclass based on category (polymorphism)
+                InventoryItem newItem = createItemByCategory(category, name, value, qty);
                 newItem.description = desc;
                 inventoryManager.addItem(newItem);
                 inventoryManager.saveInventory();
@@ -317,7 +322,8 @@ public class AdminInventoryScreen extends JPanel {
                 String category = categorySelection.substring(0, 1);
                 int qty = Integer.parseInt(qtyField.getText().trim());
 
-                InventoryItem updatedItem = new InventoryItem(newName, value, category, qty);
+                // Create appropriate subclass based on category (polymorphism)
+                InventoryItem updatedItem = createItemByCategory(category, newName, value, qty);
                 updatedItem.description = desc;
                 inventoryManager.updateItem(originalName, updatedItem);
                 inventoryManager.saveInventory();
@@ -350,6 +356,21 @@ public class AdminInventoryScreen extends JPanel {
                     MainActivity.getInstance().refreshAllScreens();
                 }
             }
+        }
+    }
+
+    // Factory method to create appropriate subclass based on category
+    // Demonstrates polymorphism - returns specific subclass as InventoryItem
+    private InventoryItem createItemByCategory(String category, String name, double price, int quantity) {
+        switch (category) {
+            case "1":
+                return new Tools(name, price, quantity);
+            case "2":
+                return new BuildingMaterials(name, price, quantity);
+            case "3":
+                return new PaintAndSupplies(name, price, quantity);
+            default:
+                return new Tools(name, price, quantity); // Default to Tools
         }
     }
 }
