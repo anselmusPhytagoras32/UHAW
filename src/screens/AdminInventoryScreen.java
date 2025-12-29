@@ -210,10 +210,10 @@ public class AdminInventoryScreen extends JPanel {
     private void showAddItemDialog() {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Add New Item", true);
         dialog.setLayout(new BorderLayout());
-        dialog.setSize(400, 450);
+        dialog.setSize(400, 500);
         dialog.setLocationRelativeTo(this);
 
-        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 15));
+        JPanel formPanel = new JPanel(new GridLayout(7, 2, 10, 15));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JLabel nameLabel = new JLabel("Item Name:"); JTextField nameField = new JTextField();
@@ -223,11 +223,33 @@ public class AdminInventoryScreen extends JPanel {
         String[] categories = {"1 - Tools", "2 - Building Materials", "3 - Paint & Supplies"};
         JComboBox<String> categoryCombo = new JComboBox<>(categories);
         JLabel qtyLabel = new JLabel("Quantity:"); JTextField qtyField = new JTextField();
+        
+        // Unique field based on category
+        JLabel uniqueFieldLabel = new JLabel("Power Source:");
+        JTextField uniqueField = new JTextField();
+        
+        // Update unique field label when category changes
+        categoryCombo.addActionListener(e -> {
+            int selectedIndex = categoryCombo.getSelectedIndex();
+            switch (selectedIndex) {
+                case 0: // Tools
+                    uniqueFieldLabel.setText("Power Source:");
+                    break;
+                case 1: // Building Materials
+                    uniqueFieldLabel.setText("Material:");
+                    break;
+                case 2: // Paint & Supplies
+                    uniqueFieldLabel.setText("Color:");
+                    break;
+            }
+            uniqueField.setText("");
+        });
 
         formPanel.add(nameLabel); formPanel.add(nameField);
         formPanel.add(descLabel); formPanel.add(descField);
         formPanel.add(valueLabel); formPanel.add(valueField);
         formPanel.add(categoryLabel); formPanel.add(categoryCombo);
+        formPanel.add(uniqueFieldLabel); formPanel.add(uniqueField);
         formPanel.add(qtyLabel); formPanel.add(qtyField);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
@@ -242,6 +264,7 @@ public class AdminInventoryScreen extends JPanel {
                 String categorySelection = (String) categoryCombo.getSelectedItem();
                 String category = categorySelection.substring(0, 1);
                 int qty = Integer.parseInt(qtyField.getText().trim());
+                String uniqueValue = uniqueField.getText().trim();
 
                 if (name.isEmpty()) {
                     JOptionPane.showMessageDialog(dialog, "Please fill fields", "Error", JOptionPane.ERROR_MESSAGE);
@@ -249,7 +272,7 @@ public class AdminInventoryScreen extends JPanel {
                 }
 
                 // Create appropriate subclass based on category (polymorphism)
-                InventoryItem newItem = createItemByCategory(category, name, value, qty);
+                InventoryItem newItem = createItemByCategory(category, name, value, qty, uniqueValue);
                 newItem.description = desc;
                 inventoryManager.addItem(newItem);
                 inventoryManager.saveInventory();
@@ -282,10 +305,10 @@ public class AdminInventoryScreen extends JPanel {
 
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Edit Item", true);
         dialog.setLayout(new BorderLayout());
-        dialog.setSize(400, 450);
+        dialog.setSize(400, 500);
         dialog.setLocationRelativeTo(this);
 
-        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 15));
+        JPanel formPanel = new JPanel(new GridLayout(7, 2, 10, 15));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JTextField nameField = new JTextField(item.getName());
@@ -301,11 +324,45 @@ public class AdminInventoryScreen extends JPanel {
             }
         }
         JTextField qtyField = new JTextField(String.valueOf(item.getQuantity()));
+        
+        // Unique field based on category
+        JLabel uniqueFieldLabel = new JLabel();
+        JTextField uniqueField = new JTextField();
+        
+        // Set initial unique field value based on current item type
+        if (item instanceof PaintAndSupplies) {
+            uniqueFieldLabel.setText("Color:");
+            uniqueField.setText(((PaintAndSupplies) item).getColor());
+        } else if (item instanceof Tools) {
+            uniqueFieldLabel.setText("Power Source:");
+            uniqueField.setText(((Tools) item).getPowerSource());
+        } else if (item instanceof BuildingMaterials) {
+            uniqueFieldLabel.setText("Material:");
+            uniqueField.setText(((BuildingMaterials) item).getMaterial());
+        }
+        
+        // Update unique field label when category changes
+        categoryCombo.addActionListener(e -> {
+            int selectedIndex = categoryCombo.getSelectedIndex();
+            switch (selectedIndex) {
+                case 0: // Tools
+                    uniqueFieldLabel.setText("Power Source:");
+                    break;
+                case 1: // Building Materials
+                    uniqueFieldLabel.setText("Material:");
+                    break;
+                case 2: // Paint & Supplies
+                    uniqueFieldLabel.setText("Color:");
+                    break;
+            }
+            uniqueField.setText("");
+        });
 
         formPanel.add(new JLabel("Item Name:")); formPanel.add(nameField);
         formPanel.add(new JLabel("Description:")); formPanel.add(descField);
         formPanel.add(new JLabel("Value:")); formPanel.add(valueField);
         formPanel.add(new JLabel("Category:")); formPanel.add(categoryCombo);
+        formPanel.add(uniqueFieldLabel); formPanel.add(uniqueField);
         formPanel.add(new JLabel("Quantity:")); formPanel.add(qtyField);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
@@ -321,9 +378,10 @@ public class AdminInventoryScreen extends JPanel {
                 String categorySelection = (String) categoryCombo.getSelectedItem();
                 String category = categorySelection.substring(0, 1);
                 int qty = Integer.parseInt(qtyField.getText().trim());
+                String uniqueValue = uniqueField.getText().trim();
 
                 // Create appropriate subclass based on category (polymorphism)
-                InventoryItem updatedItem = createItemByCategory(category, newName, value, qty);
+                InventoryItem updatedItem = createItemByCategory(category, newName, value, qty, uniqueValue);
                 updatedItem.description = desc;
                 inventoryManager.updateItem(originalName, updatedItem);
                 inventoryManager.saveInventory();
@@ -361,14 +419,26 @@ public class AdminInventoryScreen extends JPanel {
 
     // Factory method to create appropriate subclass based on category
     // Demonstrates polymorphism - returns specific subclass as InventoryItem
-    private InventoryItem createItemByCategory(String category, String name, double price, int quantity) {
+    private InventoryItem createItemByCategory(String category, String name, double price, int quantity, String uniqueValue) {
         switch (category) {
             case "1":
-                return new Tools(name, price, quantity);
+                Tools tool = new Tools(name, price, quantity);
+                if (uniqueValue != null && !uniqueValue.isEmpty()) {
+                    tool.setPowerSource(uniqueValue);
+                }
+                return tool;
             case "2":
-                return new BuildingMaterials(name, price, quantity);
+                BuildingMaterials building = new BuildingMaterials(name, price, quantity);
+                if (uniqueValue != null && !uniqueValue.isEmpty()) {
+                    building.setMaterial(uniqueValue);
+                }
+                return building;
             case "3":
-                return new PaintAndSupplies(name, price, quantity);
+                PaintAndSupplies paint = new PaintAndSupplies(name, price, quantity);
+                if (uniqueValue != null && !uniqueValue.isEmpty()) {
+                    paint.setColor(uniqueValue);
+                }
+                return paint;
             default:
                 return new Tools(name, price, quantity); // Default to Tools
         }

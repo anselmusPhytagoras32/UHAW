@@ -1,786 +1,786 @@
 [
-    {
-        "itemName":  "Power Drill",
-        "description":  "Professional cordless power drill with variable speed and two batteries",
-        "value":  150.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Electric"
-    },
-    {
-        "itemName":  "Hammer Set",
-        "description":  "Complete set of assorted hammers for various construction tasks",
-        "value":  75.5,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Ceiling Fan",
-        "description":  "Energy-efficient ceiling fan with remote control and LED light",
-        "value":  250.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Metal"
-    },
-    {
-        "itemName":  "Acrylic Paint",
-        "description":  "High-quality acrylic paint suitable for walls and furniture",
-        "value":  45.99,
-        "category":  "3",
-        "quantity":  982,
-        "color":  "Multi-Color"
-    },
-    {
-        "itemName":  "Chainsaw",
-        "description":  "Gas-powered chainsaw for cutting trees and heavy branches",
-        "value":  500.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Gas"
-    },
-    {
-        "itemName":  "Socket Wrench Set",
-        "description":  "Complete set of sockets and wrench handles in metric and standard sizes",
-        "value":  199.99,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Screwdriver",
-        "description":  "Multi-purpose screwdriver with interchangeable bits",
-        "value":  29.5,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Step Ladder",
-        "description":  "Lightweight 6-step ladder with safety rails",
-        "value":  199.99,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Tape Measure",
-        "description":  "25-foot retractable tape measure with auto-lock feature",
-        "value":  29.5,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Kitchen Sink",
-        "description":  "Stainless steel double bowl kitchen sink",
-        "value":  350.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Stainless Steel"
-    },
-    {
-        "itemName":  "Extension Cord",
-        "description":  "50-foot heavy-duty extension cord with safety plug",
-        "value":  120.75,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Plastic"
-    },
-    {
-        "itemName":  "Wheelbarrow",
-        "description":  "Heavy-duty wheelbarrow for garden and construction work",
-        "value":  299.99,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Garden Hose",
-        "description":  "50-foot flexible rubber garden hose with fittings",
-        "value":  89.99,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Rubber"
-    },
-    {
-        "itemName":  "Pliers Set",
-        "description":  "Set of assorted pliers including slip-joint and needle-nose",
-        "value":  65.25,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Generator",
-        "description":  "Portable 5000W generator for backup power",
-        "value":  750.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Gas"
-    },
-    {
-        "itemName":  "Circular Saw",
-        "description":  "1400W circular saw for cutting wood and composite materials",
-        "value":  120.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Electric"
-    },
-    {
-        "itemName":  "Jigsaw",
-        "description":  "Variable speed jigsaw for precision curved cuts",
-        "value":  85.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Electric"
-    },
-    {
-        "itemName":  "Angle Grinder",
-        "description":  "115mm angle grinder for cutting and grinding",
-        "value":  65.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Electric"
-    },
-    {
-        "itemName":  "Orbital Sander",
-        "description":  "Electric orbital sander for smooth surface finishing",
-        "value":  55.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Electric"
-    },
-    {
-        "itemName":  "Reciprocating Saw",
-        "description":  "Powerful reciprocating saw for demolition and cutting",
-        "value":  110.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Electric"
-    },
-    {
-        "itemName":  "Heat Gun",
-        "description":  "Variable temperature heat gun for paint removal",
-        "value":  45.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Electric"
-    },
-    {
-        "itemName":  "Soldering Iron Kit",
-        "description":  "Complete soldering kit with iron, solder, and tools",
-        "value":  35.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Electric"
-    },
-    {
-        "itemName":  "Digital Multimeter",
-        "description":  "Digital multimeter for measuring voltage, current, and resistance",
-        "value":  50.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Battery"
-    },
-    {
-        "itemName":  "Laser Level",
-        "description":  "Self-leveling laser level for accurate positioning",
-        "value":  95.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Battery"
-    },
-    {
-        "itemName":  "Spirit Level",
-        "description":  "24-inch aluminum spirit level with three bubble vials",
-        "value":  25.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Chalk Line Reel",
-        "description":  "Chalk line reel with 50-foot capacity",
-        "value":  15.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Stud Finder",
-        "description":  "Electronic stud finder for locating wood and metal studs",
-        "value":  30.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Battery"
-    },
-    {
-        "itemName":  "Crowbar",
-        "description":  "12-inch steel crowbar for prying and removal",
-        "value":  18.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Sledgehammer",
-        "description":  "16-pound sledgehammer for heavy-duty demolition",
-        "value":  45.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Rubber Mallet",
-        "description":  "Rubber-headed mallet for tile and assembly work",
-        "value":  12.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Chisel Set",
-        "description":  "Set of 4 wood chisels with soft-grip handles",
-        "value":  40.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Wire Strippers",
-        "description":  "Automatic wire stripper for electrical work",
-        "value":  22.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Bolt Cutters",
-        "description":  "18-inch bolt cutters for cutting padlocks and chains",
-        "value":  55.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Pipe Wrench",
-        "description":  "14-inch adjustable pipe wrench",
-        "value":  35.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Adjustable Wrench",
-        "description":  "10-inch adjustable wrench for various fastening sizes",
-        "value":  20.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Hex Key Set",
-        "description":  "Complete set of hex keys in metric and standard sizes",
-        "value":  15.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Utility Knife",
-        "description":  "Retractable utility knife with safety guard",
-        "value":  10.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Putty Knife",
-        "description":  "2-inch plastic putty knife for scraping",
-        "value":  8.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Air Compressor",
-        "description":  "Oil-free air compressor with 50L capacity",
-        "value":  180.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Electric"
-    },
-    {
-        "itemName":  "Nail Gun",
-        "description":  "Pneumatic nail gun for fast fastening",
-        "value":  90.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Pneumatic"
-    },
-    {
-        "itemName":  "Digital Caliper",
-        "description":  "Digital caliper with LCD display for precision measurement",
-        "value":  35.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Battery"
-    },
-    {
-        "itemName":  "Flashlight",
-        "description":  "LED flashlight with adjustable beam",
-        "value":  25.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Battery"
-    },
-    {
-        "itemName":  "Tool Box",
-        "description":  "Metal tool box with organizer tray",
-        "value":  30.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Work Gloves",
-        "description":  "Leather work gloves for hand protection",
-        "value":  15.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Safety Glasses",
-        "description":  "Impact-resistant safety glasses with UV protection",
-        "value":  8.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Ear Protection",
-        "description":  "Noise-reducing ear plugs and muff set",
-        "value":  20.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Knee Pads",
-        "description":  "Gel-filled knee pads for comfortable kneeling",
-        "value":  35.0,
-        "category":  "1",
-        "quantity":  1000,
-        "powerSource":  "Manual"
-    },
-    {
-        "itemName":  "Lumber 2x4 8ft",
-        "description":  "8-foot pressure-treated 2x4 lumber",
-        "value":  8.5,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Wood"
-    },
-    {
-        "itemName":  "Lumber 2x4 10ft",
-        "description":  "10-foot pressure-treated 2x4 lumber",
-        "value":  10.5,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Wood"
-    },
-    {
-        "itemName":  "Plywood 1/2in",
-        "description":  "1/2-inch standard plywood sheet",
-        "value":  45.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Wood"
-    },
-    {
-        "itemName":  "Plywood 3/4in",
-        "description":  "3/4-inch standard plywood sheet",
-        "value":  65.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Wood"
-    },
-    {
-        "itemName":  "Drywall Sheet",
-        "description":  "Standard 1/2-inch drywall sheet",
-        "value":  15.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Gypsum"
-    },
-    {
-        "itemName":  "Concrete Mix",
-        "description":  "Ready-mix concrete for general construction",
-        "value":  6.5,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Concrete"
-    },
-    {
-        "itemName":  "Mortar Mix",
-        "description":  "Pre-mixed mortar for masonry work",
-        "value":  8.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Concrete"
-    },
-    {
-        "itemName":  "Play Sand",
-        "description":  "Fine construction and play sand",
-        "value":  5.5,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Stone"
-    },
-    {
-        "itemName":  "Gravel",
-        "description":  "Coarse gravel for drainage and landscaping",
-        "value":  5.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Stone"
-    },
-    {
-        "itemName":  "Rebar 1/2in",
-        "description":  "1/2-inch reinforcing steel bar",
-        "value":  12.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Metal"
-    },
-    {
-        "itemName":  "PVC Pipe 2in",
-        "description":  "2-inch Schedule 40 PVC pipe",
-        "value":  18.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Plastic"
-    },
-    {
-        "itemName":  "Copper Pipe",
-        "description":  "Type L copper tubing for plumbing",
-        "value":  25.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Metal"
-    },
-    {
-        "itemName":  "Ceramic Floor Tile",
-        "description":  "12x12 ceramic floor tiles",
-        "value":  35.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Ceramic"
-    },
-    {
-        "itemName":  "Grout Grey",
-        "description":  "Grey grout for tile installation",
-        "value":  18.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Concrete"
-    },
-    {
-        "itemName":  "Roof Shingles",
-        "description":  "Asphalt roof shingles - 3 bundle pack",
-        "value":  32.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Asphalt"
-    },
-    {
-        "itemName":  "Roofing Felt",
-        "description":  "Tar paper underlayment for roofing",
-        "value":  25.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Fabric"
-    },
-    {
-        "itemName":  "Insulation R-13",
-        "description":  "Fiberglass insulation batting R-13",
-        "value":  22.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Fiberglass"
-    },
-    {
-        "itemName":  "Door Hinge",
-        "description":  "Brass door hinge pair",
-        "value":  5.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Metal"
-    },
-    {
-        "itemName":  "Entry Door Knob",
-        "description":  "Polished entry door knob with lock",
-        "value":  25.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Metal"
-    },
-    {
-        "itemName":  "Deadbolt",
-        "description":  "Single cylinder deadbolt lock",
-        "value":  30.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Metal"
-    },
-    {
-        "itemName":  "Wood Screws",
-        "description":  "Assorted wood screw set",
-        "value":  8.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Metal"
-    },
-    {
-        "itemName":  "Drywall Screws",
-        "description":  "1 1/4-inch drywall screw pack",
-        "value":  7.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Metal"
-    },
-    {
-        "itemName":  "Common Nails",
-        "description":  "Assorted common nail set",
-        "value":  6.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Metal"
-    },
-    {
-        "itemName":  "Anchor Bolts",
-        "description":  "Heavy-duty anchor bolt set",
-        "value":  15.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Metal"
-    },
-    {
-        "itemName":  "Duct Tape",
-        "description":  "Heavy-duty 2-inch duct tape roll",
-        "value":  9.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Plastic"
-    },
-    {
-        "itemName":  "Electrical Wire",
-        "description":  "14/2 romex electrical wire 50ft",
-        "value":  95.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Metal"
-    },
-    {
-        "itemName":  "Outlet Box",
-        "description":  "Standard electrical outlet box",
-        "value":  2.5,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Plastic"
-    },
-    {
-        "itemName":  "Light Switch",
-        "description":  "Standard single-pole light switch",
-        "value":  3.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Plastic"
-    },
-    {
-        "itemName":  "Duplex Receptacle",
-        "description":  "Standard 15A 125V duplex outlet",
-        "value":  3.5,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Plastic"
-    },
-    {
-        "itemName":  "PVC Elbow",
-        "description":  "2-inch 90-degree PVC elbow",
-        "value":  3.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Plastic"
-    },
-    {
-        "itemName":  "PVC Tee",
-        "description":  "2-inch PVC tee fitting",
-        "value":  4.5,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Plastic"
-    },
-    {
-        "itemName":  "Toilet Wax Ring",
-        "description":  "Standard toilet wax ring with flange",
-        "value":  5.0,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Wax"
-    },
-    {
-        "itemName":  "Teflon Tape",
-        "description":  "PTFE thread seal tape roll",
-        "value":  1.5,
-        "category":  "2",
-        "quantity":  1000,
-        "material":  "Plastic"
-    },
-    {
-        "itemName":  "Interior Paint Beige",
-        "description":  "Interior latex paint in beige finish",
-        "value":  42.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Beige"
-    },
-    {
-        "itemName":  "Interior Paint Grey",
-        "description":  "Interior latex paint in grey finish",
-        "value":  42.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Grey"
-    },
-    {
-        "itemName":  "Exterior Paint White",
-        "description":  "Exterior latex paint in white finish",
-        "value":  48.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "White"
-    },
-    {
-        "itemName":  "Exterior Paint Brown",
-        "description":  "Exterior latex paint in brown finish",
-        "value":  48.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Brown"
-    },
-    {
-        "itemName":  "Primer All-Purpose",
-        "description":  "All-purpose primer for interior and exterior",
-        "value":  35.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "White/Grey"
-    },
-    {
-        "itemName":  "Wood Stain Walnut",
-        "description":  "Oil-based wood stain in walnut color",
-        "value":  15.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Walnut"
-    },
-    {
-        "itemName":  "Wood Stain Oak",
-        "description":  "Oil-based wood stain in oak color",
-        "value":  15.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Oak"
-    },
-    {
-        "itemName":  "Polyurethane",
-        "description":  "Clear polyurethane protective finish",
-        "value":  18.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Clear/Natural"
-    },
-    {
-        "itemName":  "Paint Thinner",
-        "description":  "Paint thinner for cleanup and thinning",
-        "value":  12.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Clear/Natural"
-    },
-    {
-        "itemName":  "Mineral Spirits",
-        "description":  "Mineral spirits for paint and stain removal",
-        "value":  9.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Clear/Natural"
-    },
-    {
-        "itemName":  "Spray Paint Black",
-        "description":  "Matte black spray paint can",
-        "value":  6.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Black"
-    },
-    {
-        "itemName":  "Spray Paint White",
-        "description":  "Matte white spray paint can",
-        "value":  6.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "White"
-    },
-    {
-        "itemName":  "Spray Paint Primer",
-        "description":  "Grey primer spray paint can",
-        "value":  6.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "White/Grey"
-    },
-    {
-        "itemName":  "Deck Stripper",
-        "description":  "Wood deck stain and paint stripper",
-        "value":  25.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Clear/Natural"
-    },
-    {
-        "itemName":  "Concrete Sealer",
-        "description":  "Concrete and masonry sealer",
-        "value":  30.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Clear/Natural"
-    },
-    {
-        "itemName":  "Wallpaper Glue",
-        "description":  "Wallpaper adhesive paste",
-        "value":  20.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Clear/Natural"
-    },
-    {
-        "itemName":  "Spackling Paste",
-        "description":  "Joint compound for wall repair",
-        "value":  8.0,
-        "category":  "3",
-        "quantity":  1000,
-        "color":  "Clear/Natural"
-    },
-    {
-        "itemName":  "Dildo",
-        "description":  "Flexible vinyl conduit pipe for electrical",
-        "value":  126.0,
-        "category":  "2",
-        "quantity":  12344,
-        "material":  "Mixed"
-    }
+  {
+    "itemName": "Power Drill",
+    "value": 150.0,
+    "category": "1",
+    "description": "Professional cordless power drill with variable speed and two batteries",
+    "quantity": 1000,
+    "powerSource": "Electric"
+  },
+  {
+    "itemName": "Hammer Set",
+    "value": 75.5,
+    "category": "1",
+    "description": "Complete set of assorted hammers for various construction tasks",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Ceiling Fan",
+    "value": 250.0,
+    "category": "2",
+    "description": "Energy-efficient ceiling fan with remote control and LED light",
+    "quantity": 1000,
+    "material": "Metal"
+  },
+  {
+    "itemName": "Acrylic Paint",
+    "value": 45.99,
+    "category": "3",
+    "description": "High-quality acrylic paint suitable for walls and furniture",
+    "quantity": 982,
+    "color": "Multi-Color"
+  },
+  {
+    "itemName": "Chainsaw",
+    "value": 500.0,
+    "category": "1",
+    "description": "Gas-powered chainsaw for cutting trees and heavy branches",
+    "quantity": 1000,
+    "powerSource": "Gas"
+  },
+  {
+    "itemName": "Socket Wrench Set",
+    "value": 199.99,
+    "category": "1",
+    "description": "Complete set of sockets and wrench handles in metric and standard sizes",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Screwdriver",
+    "value": 29.5,
+    "category": "1",
+    "description": "Multi-purpose screwdriver with interchangeable bits",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Step Ladder",
+    "value": 199.99,
+    "category": "1",
+    "description": "Lightweight 6-step ladder with safety rails",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Tape Measure",
+    "value": 29.5,
+    "category": "1",
+    "description": "25-foot retractable tape measure with auto-lock feature",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Kitchen Sink",
+    "value": 350.0,
+    "category": "2",
+    "description": "Stainless steel double bowl kitchen sink",
+    "quantity": 1000,
+    "material": "Stainless Steel"
+  },
+  {
+    "itemName": "Extension Cord",
+    "value": 120.75,
+    "category": "2",
+    "description": "50-foot heavy-duty extension cord with safety plug",
+    "quantity": 1000,
+    "material": "Plastic"
+  },
+  {
+    "itemName": "Wheelbarrow",
+    "value": 299.99,
+    "category": "1",
+    "description": "Heavy-duty wheelbarrow for garden and construction work",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Garden Hose",
+    "value": 89.99,
+    "category": "2",
+    "description": "50-foot flexible rubber garden hose with fittings",
+    "quantity": 1000,
+    "material": "Rubber"
+  },
+  {
+    "itemName": "Pliers Set",
+    "value": 65.25,
+    "category": "1",
+    "description": "Set of assorted pliers including slip-joint and needle-nose",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Generator",
+    "value": 750.0,
+    "category": "1",
+    "description": "Portable 5000W generator for backup power",
+    "quantity": 1000,
+    "powerSource": "Gas"
+  },
+  {
+    "itemName": "Circular Saw",
+    "value": 120.0,
+    "category": "1",
+    "description": "1400W circular saw for cutting wood and composite materials",
+    "quantity": 1000,
+    "powerSource": "Electric"
+  },
+  {
+    "itemName": "Jigsaw",
+    "value": 85.0,
+    "category": "1",
+    "description": "Variable speed jigsaw for precision curved cuts",
+    "quantity": 1000,
+    "powerSource": "Electric"
+  },
+  {
+    "itemName": "Angle Grinder",
+    "value": 65.0,
+    "category": "1",
+    "description": "115mm angle grinder for cutting and grinding",
+    "quantity": 1000,
+    "powerSource": "Electric"
+  },
+  {
+    "itemName": "Orbital Sander",
+    "value": 55.0,
+    "category": "1",
+    "description": "Electric orbital sander for smooth surface finishing",
+    "quantity": 1000,
+    "powerSource": "Electric"
+  },
+  {
+    "itemName": "Reciprocating Saw",
+    "value": 110.0,
+    "category": "1",
+    "description": "Powerful reciprocating saw for demolition and cutting",
+    "quantity": 1000,
+    "powerSource": "Electric"
+  },
+  {
+    "itemName": "Heat Gun",
+    "value": 45.0,
+    "category": "1",
+    "description": "Variable temperature heat gun for paint removal",
+    "quantity": 1000,
+    "powerSource": "Electric"
+  },
+  {
+    "itemName": "Soldering Iron Kit",
+    "value": 35.0,
+    "category": "1",
+    "description": "Complete soldering kit with iron, solder, and tools",
+    "quantity": 1000,
+    "powerSource": "Electric"
+  },
+  {
+    "itemName": "Digital Multimeter",
+    "value": 50.0,
+    "category": "1",
+    "description": "Digital multimeter for measuring voltage, current, and resistance",
+    "quantity": 1000,
+    "powerSource": "Battery"
+  },
+  {
+    "itemName": "Laser Level",
+    "value": 95.0,
+    "category": "1",
+    "description": "Self-leveling laser level for accurate positioning",
+    "quantity": 1000,
+    "powerSource": "Battery"
+  },
+  {
+    "itemName": "Spirit Level",
+    "value": 25.0,
+    "category": "1",
+    "description": "24-inch aluminum spirit level with three bubble vials",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Chalk Line Reel",
+    "value": 15.0,
+    "category": "1",
+    "description": "Chalk line reel with 50-foot capacity",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Stud Finder",
+    "value": 30.0,
+    "category": "1",
+    "description": "Electronic stud finder for locating wood and metal studs",
+    "quantity": 1000,
+    "powerSource": "Battery"
+  },
+  {
+    "itemName": "Crowbar",
+    "value": 18.0,
+    "category": "1",
+    "description": "12-inch steel crowbar for prying and removal",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Sledgehammer",
+    "value": 45.0,
+    "category": "1",
+    "description": "16-pound sledgehammer for heavy-duty demolition",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Rubber Mallet",
+    "value": 12.0,
+    "category": "1",
+    "description": "Rubber-headed mallet for tile and assembly work",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Chisel Set",
+    "value": 40.0,
+    "category": "1",
+    "description": "Set of 4 wood chisels with soft-grip handles",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Wire Strippers",
+    "value": 22.0,
+    "category": "1",
+    "description": "Automatic wire stripper for electrical work",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Bolt Cutters",
+    "value": 55.0,
+    "category": "1",
+    "description": "18-inch bolt cutters for cutting padlocks and chains",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Pipe Wrench",
+    "value": 35.0,
+    "category": "1",
+    "description": "14-inch adjustable pipe wrench",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Adjustable Wrench",
+    "value": 20.0,
+    "category": "1",
+    "description": "10-inch adjustable wrench for various fastening sizes",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Hex Key Set",
+    "value": 15.0,
+    "category": "1",
+    "description": "Complete set of hex keys in metric and standard sizes",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Utility Knife",
+    "value": 10.0,
+    "category": "1",
+    "description": "Retractable utility knife with safety guard",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Putty Knife",
+    "value": 8.0,
+    "category": "1",
+    "description": "2-inch plastic putty knife for scraping",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Air Compressor",
+    "value": 180.0,
+    "category": "1",
+    "description": "Oil-free air compressor with 50L capacity",
+    "quantity": 1000,
+    "powerSource": "Electric"
+  },
+  {
+    "itemName": "Nail Gun",
+    "value": 90.0,
+    "category": "1",
+    "description": "Pneumatic nail gun for fast fastening",
+    "quantity": 1000,
+    "powerSource": "Pneumatic"
+  },
+  {
+    "itemName": "Digital Caliper",
+    "value": 35.0,
+    "category": "1",
+    "description": "Digital caliper with LCD display for precision measurement",
+    "quantity": 1000,
+    "powerSource": "Battery"
+  },
+  {
+    "itemName": "Flashlight",
+    "value": 25.0,
+    "category": "1",
+    "description": "LED flashlight with adjustable beam",
+    "quantity": 1000,
+    "powerSource": "Battery"
+  },
+  {
+    "itemName": "Tool Box",
+    "value": 30.0,
+    "category": "1",
+    "description": "Metal tool box with organizer tray",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Work Gloves",
+    "value": 15.0,
+    "category": "1",
+    "description": "Leather work gloves for hand protection",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Safety Glasses",
+    "value": 8.0,
+    "category": "1",
+    "description": "Impact-resistant safety glasses with UV protection",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Ear Protection",
+    "value": 20.0,
+    "category": "1",
+    "description": "Noise-reducing ear plugs and muff set",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Knee Pads",
+    "value": 35.0,
+    "category": "1",
+    "description": "Gel-filled knee pads for comfortable kneeling",
+    "quantity": 1000,
+    "powerSource": "Manual"
+  },
+  {
+    "itemName": "Lumber 2x4 8ft",
+    "value": 8.5,
+    "category": "2",
+    "description": "8-foot pressure-treated 2x4 lumber",
+    "quantity": 1000,
+    "material": "Wood"
+  },
+  {
+    "itemName": "Lumber 2x4 10ft",
+    "value": 10.5,
+    "category": "2",
+    "description": "10-foot pressure-treated 2x4 lumber",
+    "quantity": 1000,
+    "material": "Wood"
+  },
+  {
+    "itemName": "Plywood 1/2in",
+    "value": 45.0,
+    "category": "2",
+    "description": "1/2-inch standard plywood sheet",
+    "quantity": 1000,
+    "material": "Wood"
+  },
+  {
+    "itemName": "Plywood 3/4in",
+    "value": 65.0,
+    "category": "2",
+    "description": "3/4-inch standard plywood sheet",
+    "quantity": 1000,
+    "material": "Wood"
+  },
+  {
+    "itemName": "Drywall Sheet",
+    "value": 15.0,
+    "category": "2",
+    "description": "Standard 1/2-inch drywall sheet",
+    "quantity": 1000,
+    "material": "Gypsum"
+  },
+  {
+    "itemName": "Concrete Mix",
+    "value": 6.5,
+    "category": "2",
+    "description": "Ready-mix concrete for general construction",
+    "quantity": 1000,
+    "material": "Concrete"
+  },
+  {
+    "itemName": "Mortar Mix",
+    "value": 8.0,
+    "category": "2",
+    "description": "Pre-mixed mortar for masonry work",
+    "quantity": 1000,
+    "material": "Concrete"
+  },
+  {
+    "itemName": "Play Sand",
+    "value": 5.5,
+    "category": "2",
+    "description": "Fine construction and play sand",
+    "quantity": 1000,
+    "material": "Stone"
+  },
+  {
+    "itemName": "Gravel",
+    "value": 5.0,
+    "category": "2",
+    "description": "Coarse gravel for drainage and landscaping",
+    "quantity": 1000,
+    "material": "Stone"
+  },
+  {
+    "itemName": "Rebar 1/2in",
+    "value": 12.0,
+    "category": "2",
+    "description": "1/2-inch reinforcing steel bar",
+    "quantity": 1000,
+    "material": "Metal"
+  },
+  {
+    "itemName": "PVC Pipe 2in",
+    "value": 18.0,
+    "category": "2",
+    "description": "2-inch Schedule 40 PVC pipe",
+    "quantity": 1000,
+    "material": "Plastic"
+  },
+  {
+    "itemName": "Copper Pipe",
+    "value": 25.0,
+    "category": "2",
+    "description": "Type L copper tubing for plumbing",
+    "quantity": 1000,
+    "material": "Metal"
+  },
+  {
+    "itemName": "Ceramic Floor Tile",
+    "value": 35.0,
+    "category": "2",
+    "description": "12x12 ceramic floor tiles",
+    "quantity": 1000,
+    "material": "Ceramic"
+  },
+  {
+    "itemName": "Grout Grey",
+    "value": 18.0,
+    "category": "2",
+    "description": "Grey grout for tile installation",
+    "quantity": 1000,
+    "material": "Concrete"
+  },
+  {
+    "itemName": "Roof Shingles",
+    "value": 32.0,
+    "category": "2",
+    "description": "Asphalt roof shingles - 3 bundle pack",
+    "quantity": 1000,
+    "material": "Asphalt"
+  },
+  {
+    "itemName": "Roofing Felt",
+    "value": 25.0,
+    "category": "2",
+    "description": "Tar paper underlayment for roofing",
+    "quantity": 1000,
+    "material": "Fabric"
+  },
+  {
+    "itemName": "Insulation R-13",
+    "value": 22.0,
+    "category": "2",
+    "description": "Fiberglass insulation batting R-13",
+    "quantity": 1000,
+    "material": "Fiberglass"
+  },
+  {
+    "itemName": "Door Hinge",
+    "value": 5.0,
+    "category": "2",
+    "description": "Brass door hinge pair",
+    "quantity": 1000,
+    "material": "Metal"
+  },
+  {
+    "itemName": "Entry Door Knob",
+    "value": 25.0,
+    "category": "2",
+    "description": "Polished entry door knob with lock",
+    "quantity": 1000,
+    "material": "Metal"
+  },
+  {
+    "itemName": "Deadbolt",
+    "value": 30.0,
+    "category": "2",
+    "description": "Single cylinder deadbolt lock",
+    "quantity": 1000,
+    "material": "Metal"
+  },
+  {
+    "itemName": "Wood Screws",
+    "value": 8.0,
+    "category": "2",
+    "description": "Assorted wood screw set",
+    "quantity": 1000,
+    "material": "Metal"
+  },
+  {
+    "itemName": "Drywall Screws",
+    "value": 7.0,
+    "category": "2",
+    "description": "1 1/4-inch drywall screw pack",
+    "quantity": 1000,
+    "material": "Metal"
+  },
+  {
+    "itemName": "Common Nails",
+    "value": 6.0,
+    "category": "2",
+    "description": "Assorted common nail set",
+    "quantity": 1000,
+    "material": "Metal"
+  },
+  {
+    "itemName": "Anchor Bolts",
+    "value": 15.0,
+    "category": "2",
+    "description": "Heavy-duty anchor bolt set",
+    "quantity": 1000,
+    "material": "Metal"
+  },
+  {
+    "itemName": "Duct Tape",
+    "value": 9.0,
+    "category": "2",
+    "description": "Heavy-duty 2-inch duct tape roll",
+    "quantity": 1000,
+    "material": "Plastic"
+  },
+  {
+    "itemName": "Electrical Wire",
+    "value": 95.0,
+    "category": "2",
+    "description": "14/2 romex electrical wire 50ft",
+    "quantity": 1000,
+    "material": "Metal"
+  },
+  {
+    "itemName": "Outlet Box",
+    "value": 2.5,
+    "category": "2",
+    "description": "Standard electrical outlet box",
+    "quantity": 1000,
+    "material": "Plastic"
+  },
+  {
+    "itemName": "Light Switch",
+    "value": 3.0,
+    "category": "2",
+    "description": "Standard single-pole light switch",
+    "quantity": 1000,
+    "material": "Plastic"
+  },
+  {
+    "itemName": "Duplex Receptacle",
+    "value": 3.5,
+    "category": "2",
+    "description": "Standard 15A 125V duplex outlet",
+    "quantity": 1000,
+    "material": "Plastic"
+  },
+  {
+    "itemName": "PVC Elbow",
+    "value": 3.0,
+    "category": "2",
+    "description": "2-inch 90-degree PVC elbow",
+    "quantity": 1000,
+    "material": "Plastic"
+  },
+  {
+    "itemName": "PVC Tee",
+    "value": 4.5,
+    "category": "2",
+    "description": "2-inch PVC tee fitting",
+    "quantity": 1000,
+    "material": "Plastic"
+  },
+  {
+    "itemName": "Toilet Wax Ring",
+    "value": 5.0,
+    "category": "2",
+    "description": "Standard toilet wax ring with flange",
+    "quantity": 1000,
+    "material": "Wax"
+  },
+  {
+    "itemName": "Teflon Tape",
+    "value": 1.5,
+    "category": "2",
+    "description": "PTFE thread seal tape roll",
+    "quantity": 1000,
+    "material": "Plastic"
+  },
+  {
+    "itemName": "Interior Paint Beige",
+    "value": 42.0,
+    "category": "3",
+    "description": "Interior latex paint in beige finish",
+    "quantity": 1000,
+    "color": "Beige"
+  },
+  {
+    "itemName": "Interior Paint Grey",
+    "value": 42.0,
+    "category": "3",
+    "description": "Interior latex paint in grey finish",
+    "quantity": 1000,
+    "color": "Grey"
+  },
+  {
+    "itemName": "Exterior Paint White",
+    "value": 48.0,
+    "category": "3",
+    "description": "Exterior latex paint in white finish",
+    "quantity": 1000,
+    "color": "White"
+  },
+  {
+    "itemName": "Exterior Paint Brown",
+    "value": 48.0,
+    "category": "3",
+    "description": "Exterior latex paint in brown finish",
+    "quantity": 1000,
+    "color": "Brown"
+  },
+  {
+    "itemName": "Primer All-Purpose",
+    "value": 35.0,
+    "category": "3",
+    "description": "All-purpose primer for interior and exterior",
+    "quantity": 1000,
+    "color": "White/Grey"
+  },
+  {
+    "itemName": "Wood Stain Walnut",
+    "value": 15.0,
+    "category": "3",
+    "description": "Oil-based wood stain in walnut color",
+    "quantity": 1000,
+    "color": "Walnut"
+  },
+  {
+    "itemName": "Wood Stain Oak",
+    "value": 15.0,
+    "category": "3",
+    "description": "Oil-based wood stain in oak color",
+    "quantity": 1000,
+    "color": "Oak"
+  },
+  {
+    "itemName": "Polyurethane",
+    "value": 18.0,
+    "category": "3",
+    "description": "Clear polyurethane protective finish",
+    "quantity": 1000,
+    "color": "Clear/Natural"
+  },
+  {
+    "itemName": "Paint Thinner",
+    "value": 12.0,
+    "category": "3",
+    "description": "Paint thinner for cleanup and thinning",
+    "quantity": 1000,
+    "color": "Clear/Natural"
+  },
+  {
+    "itemName": "Mineral Spirits",
+    "value": 9.0,
+    "category": "3",
+    "description": "Mineral spirits for paint and stain removal",
+    "quantity": 1000,
+    "color": "Clear/Natural"
+  },
+  {
+    "itemName": "Spray Paint Black",
+    "value": 6.0,
+    "category": "3",
+    "description": "Matte black spray paint can",
+    "quantity": 1000,
+    "color": "Black"
+  },
+  {
+    "itemName": "Spray Paint White",
+    "value": 6.0,
+    "category": "3",
+    "description": "Matte white spray paint can",
+    "quantity": 1000,
+    "color": "White"
+  },
+  {
+    "itemName": "Spray Paint Primer",
+    "value": 6.0,
+    "category": "3",
+    "description": "Grey primer spray paint can",
+    "quantity": 1000,
+    "color": "White/Grey"
+  },
+  {
+    "itemName": "Deck Stripper",
+    "value": 25.0,
+    "category": "3",
+    "description": "Wood deck stain and paint stripper",
+    "quantity": 1000,
+    "color": "Clear/Natural"
+  },
+  {
+    "itemName": "Concrete Sealer",
+    "value": 30.0,
+    "category": "3",
+    "description": "Concrete and masonry sealer",
+    "quantity": 1000,
+    "color": "Clear/Natural"
+  },
+  {
+    "itemName": "Wallpaper Glue",
+    "value": 20.0,
+    "category": "3",
+    "description": "Wallpaper adhesive paste",
+    "quantity": 1000,
+    "color": "Clear/Natural"
+  },
+  {
+    "itemName": "Spackling Paste",
+    "value": 8.0,
+    "category": "3",
+    "description": "Joint compound for wall repair",
+    "quantity": 1000,
+    "color": "Clear/Natural"
+  },
+  {
+    "itemName": "Dildo",
+    "value": 126.0,
+    "category": "2",
+    "description": "Flexible vinyl conduit pipe for electrical",
+    "quantity": 0,
+    "material": "Mahogany"
+  }
 ]

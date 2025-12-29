@@ -265,7 +265,30 @@ public class InventoryManager {
                     writer.println("    \"value\": " + item.getPrice() + ",");
                     writer.println("    \"category\": \"" + item.getCategory() + "\",");
                     writer.println("    \"description\": \"" + escapeJson(item.description) + "\",");
-                    writer.println("    \"quantity\": " + item.getQuantity());
+                    writer.print("    \"quantity\": " + item.getQuantity());
+                    
+                    // Save unique fields based on item type
+                    if (item instanceof PaintAndSupplies) {
+                        PaintAndSupplies paint = (PaintAndSupplies) item;
+                        if (paint.getColor() != null && !paint.getColor().isEmpty()) {
+                            writer.println(",");
+                            writer.print("    \"color\": \"" + escapeJson(paint.getColor()) + "\"");
+                        }
+                    } else if (item instanceof Tools) {
+                        Tools tool = (Tools) item;
+                        if (tool.getPowerSource() != null && !tool.getPowerSource().isEmpty()) {
+                            writer.println(",");
+                            writer.print("    \"powerSource\": \"" + escapeJson(tool.getPowerSource()) + "\"");
+                        }
+                    } else if (item instanceof BuildingMaterials) {
+                        BuildingMaterials building = (BuildingMaterials) item;
+                        if (building.getMaterial() != null && !building.getMaterial().isEmpty()) {
+                            writer.println(",");
+                            writer.print("    \"material\": \"" + escapeJson(building.getMaterial()) + "\"");
+                        }
+                    }
+                    
+                    writer.println();
                     writer.print("  }");
                     if (i < inventoryItems.size() - 1) {
                         writer.println(",");
